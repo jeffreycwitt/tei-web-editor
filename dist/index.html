@@ -1,0 +1,152 @@
+<html>
+  <head>
+    <title>Asset Management</title>
+    <link rel="stylesheet" type="text/css" href="mirador-2.4/css/mirador-combined.css">
+    <link rel="stylesheet" type="text/css" href="CETEI.css">
+
+  </head>
+  <body>
+    <script src="bundle.js"></script>
+    <script src="mirador-2.4/mirador.js"></script>
+    <script src="mirador-instance.js"></script>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand">TEI Web Editor</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <!-- <li><a href="/">Home</a></li>
+            <li><a href="/editor">Editor</a></li> -->
+            <!-- <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
+              <ul class="dropdown-menu"> -->
+                <li><a href="#" id="file-new">New</a></li>
+                <li><a href="#" class="file-open-dir">Open</a></li>
+                <li><a href="#" id="file-open-save">Save</a></li>
+                <li><a href="#" id="file-pr">Review Request</a></li>
+                <li><a href="#" id="toggle-mirador">Toggle Mirador</a></li>
+                <li><a href="#" id="toggle-preview">Toggle Preview</a></li>
+                <li><a href="#" id="toggle-editor">Toggle Editor</a></li>
+              <!-- </ul>
+            </li> -->
+
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Logged in as <span id="username">USERNAME</span></a></li>
+
+        </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+
+
+  <div id="editor-wrapper">
+    <div id="mirador-viewer"></div>
+    <div id="xml-wrapper">
+      <div id="editor" class="window"></div>
+      <div id="preview" class="window"></div>
+    </div>
+  </div>
+  <div id="dir" class="file-window">
+    <div>
+      <form id="file-manual">
+        <div class="form-group">
+          <label for="manual-url"><h3>Add by URL</h3></label>
+          <input type="text" class="form-control" id="manual-url" name="manual-url" placeholder="https://api.github.com/repos/scta-texts/summahalensis/contents/ahsh-l1p1i1t1q1c1/ahsh-l1p1i1t1q1c1.xml?ref=sandbox">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+    <div>
+      <h3>Recent Files</h3>
+      <ul class="list-unstyled" id="recentfiles">
+      </ul>
+    </div>
+    <div>
+      <h3>My Repositories</h3>
+      <ul class="list-unstyled" id="repositories">
+      </ul>
+    </div>
+    <div>
+      <h3>Suggested Repositories</h3>
+      <ul class="list-unstyled" id="suggested-repositories">
+        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta-texts/summahalensis">Fork https://api.github.com/repos/scta-texts/summahalensis</a></li>
+        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta/simple-tei-edition">Fork https://api.github.com/repos/scta/simple-tei-edition</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="repo-browser" class="file-window">
+    <p>
+      <div id="repo-browser-branch">
+      </div>
+      <div id="breadcrumbs">
+      </div>
+      <a href="#" class="file-open-dir">Back to Repository List</a></li>
+      <div id="repo-browser-list"></div>
+    </p>
+  </div>
+  <div id="save" class="file-window">
+    <form id="save-form" style="float: left; width: 40%; box-sizing: border-box;">
+      <div class="form-group">
+        <label for="save-url">File Path</label><br/>
+        <p type="text" name="save-url" id="save-url" style="word-wrap: break-word;"/>
+      </div>
+      <div class="form-group">
+        <label for="repo">Repo</label><br/>
+        <input type="text" name="repo" id="repo"/>
+      </div>
+      <div class="form-group">
+        <label for="path">Path</label><br/>
+        <input type="text" name="path" id="path"/>
+      </div>
+      <div class="form-group">
+        <label for="file-name">Filename</label><br/>
+        <input type="text" name="path" id="file-name"/>
+      </div>
+      <div class="form-group">
+        <label for="branch">Branch</label><br/>
+        <input type="text" name="branch" id="branch"/>
+      </div>
+      <div class="form-group">
+        <label for="sha">Last Commit</label><br/>
+        <input type="text" name="sha" id="sha"/>
+      </div>
+      <div class="form-group">
+        <label for="branch">Message</label><br/>
+        <input type="text" name="message" id="message"/>
+      </div>
+      <div class="form-group"><br/>
+        <input type="submit" id="save" value="save"/>
+      </div>
+    </form>
+    <div id="save-as-file-browser" style="float: left; width: 60%; box-sizing: border-box; border-left: 1px dotted black;">
+      <div style="margin: 2px; padding: 2px; border-bottom: 1px dotted black;">
+        <p>Create new repository</p>
+        <form id="create-new-repo">
+          <input type="text" name='new-repo-name' id='new-repo-name' placeholder='new-repo-name'/>
+          <input type="submit"/>
+        </form>
+      </div>
+      <ul id="save-as-file-browser-list-wrapper">
+      </ul>
+    </div>
+  </div>
+  <div id="pull-request-viewer" class="file-window">
+    <div id="current-repo">
+    </div>
+    <div id="target-repo">
+    </div>
+  </div>
