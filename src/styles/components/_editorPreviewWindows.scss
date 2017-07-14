@@ -1,0 +1,52 @@
+.window{
+  box-sizing: border-box;
+  width: 50%;
+  float: left;
+  overflow-y: scroll;
+}
+
+.no-padding{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.darkened{
+  transition:all 1s;
+  -webkit-box-shadow: 0px 0px 1px 5000px rgba(0,0,0,0.8);
+  -moz-box-shadow: 0px 0px 1px 5000px rgba(0,0,0,0.8);
+  box-shadow: 0px 0px 1px 5000px rgba(0,0,0,0.8);
+}
+
+textarea.acce_text-input {
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+#editor-wrapper{
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+#xml-wrapper {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+
+#editor{
+  transition:all 1s;
+  flex: 1;
+}
+
+#preview{
+  transition:all 1s;
+  flex: 1;
+  padding-left: 2%;
+}

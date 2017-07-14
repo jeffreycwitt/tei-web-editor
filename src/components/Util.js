@@ -12,16 +12,14 @@ var ace = require('brace');
 
 var aceEditor;
 var Util = {
-  // no idea why these are not working
   undarken: function(){
     $('#editor').removeClass("darkened");
     $('#preview').removeClass("darkened");
   },
-  // no idea why these are not working
   darken: function(){
     console.log($("#preview"));
-    $('#editor').removeClass("darkened");
-    $('#preview').removeClass("darkened");
+    $('#editor').addClass("darkened");
+    $('#preview').addClass("darkened");
   },
   access_token: access_token,
   retrieveAPIData: function(url, access_token){

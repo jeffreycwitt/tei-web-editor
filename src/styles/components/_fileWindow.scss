@@ -1,0 +1,39 @@
+@import '../variables';
+
+.file-window{
+  transition:all 1s;
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  overflow: scroll;
+  box-sizing: border-box;
+  padding: 1% 2% 2% 2%;
+  z-index: 18000;
+  background-color: $default-background-color;
+  color: $default-font-color;
+}
+.visible{
+  transition:all 1s;
+  display: block;
+}
+
+/* styling for individual windows */
+
+#dir{
+
+}
+#save{
+
+}
+#pull-request-viewer{
+
+}
+#save-as-file-browser{
+
+}
+#repo-browser{
+
+}
