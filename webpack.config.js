@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  entry: ['./src/index.js', 'bootstrap-loader'],
+  entry: ['./src/start.js', 'bootstrap-loader'],
   externals: {
 		jquery: 'jQuery',
 	},
@@ -10,7 +10,7 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			'$': 'jquery',
 			'jQuery': 'jquery'
-		}),    
+		}),
 	],
   output: {
     filename: 'bundle.js',

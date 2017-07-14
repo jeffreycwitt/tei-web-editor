@@ -1,25 +1,25 @@
-import './style.scss';
-
+//vendor imports
 import Octokat from "octokat";
-
-
-
 var base64 = require('base-64');
 var ace = require('brace');
 require('brace/mode/xml');
 require('brace/theme/kuroir');
-
-
 global.jQuery = require('jQuery');
 var $ = global.jQuery;
-
 require('bootstrap-loader');
+
+//component imports
+import Renderer from "./Renderer.js";
+import Doc from "./Doc.js";
+import Recent from "./Recent.js";
+
+
 var access_token = window.location.hash.substring(7);
-
-
 var aceEditor;
 
-$(document).ready(function(){
+
+var Main = {
+  init: function(){
   console.log(access_token)
   aceEditor = ace.edit("editor");
   aceEditor.setTheme("ace/theme/kuroir");
@@ -29,14 +29,18 @@ $(document).ready(function(){
     useSoftTabs: true
   });
   aceEditor.setShowInvisibles(true);
-
-
+  this.bindEventHandlers();
+  Util.loadTemplateText();
+},
+bindEventHandlers: function(){
+  var _this = this;
+  //This events need to be organized somehow perhaps just with better commenting.
 
   // load empty template onload
-  //Util.loadTemplateText();
+
 
   aceEditor.on('change', function() {
-    var newText = Rendering.tei_conversion(aceEditor.getValue(), function(data){
+    var newText = Renderer.tei_conversion(aceEditor.getValue(), function(data){
     });
     //console.log(newText);
     $("#preview").html(newText);
@@ -44,14 +48,9 @@ $(document).ready(function(){
 
   //load empty template
   $(document).on("click","#file-new", function(){
-    //Util.loadTemplateText();
+    Util.loadTemplateText();
   });
 
-
-
-
-//===============BINDING ENVENTS =========================//
-  //toggle window events
   $(document).on("click", "#toggle-mirador", function(){
     $('#mirador-viewer').slideToggle();
   });
@@ -131,7 +130,7 @@ $(document).ready(function(){
   $(document).on("click", ".file-open-save-as-repo", function(){
     var url = $(this).attr("data-url");
     var repo = url.split("https://api.github.com/repos/")[1];
-    Util.clearSaveParamters();
+    Util.clearSaveParameters();
     $("#repo").val(repo);
     var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
     $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
@@ -288,10 +287,18 @@ $(document).ready(function(){
       "sha": sha,
       "branch": branch
     }
-
     SaveAs.saveFile(url, commit_data, access_token);
   });
-});
+  }
+  //end of event handling functions
+}
+//end of "main compoenent"
+export default Main;
+
+//Everything below should be separated into different files if we can get the depencies sorted out.
+//I'm having trouble separating this ok, because modles below rely on Utils which relies on ACE and
+//I can't quite figure out to give the modules access to the ace editor.
+
 
 var Util = {
   // no idea why these are not working
@@ -321,7 +328,7 @@ var Util = {
     aceEditor.scrollToLine(0);
   },
   createPreviewContent: function(content){
-    var newText = Rendering.tei_conversion(content, function(data){});
+    var newText = Renderer.tei_conversion(content, function(data){});
     $("#preview").html(newText);
   },
   setSaveParameters: function(data){
@@ -339,7 +346,7 @@ var Util = {
     Doc.set(data)
     Repo.retrieveAndSetRepoState("https://api.github.com/repos/" + repo, Util.access_token)
   },
-  clearSaveParamters: function(){
+  clearSaveParameters: function(){
     $("#sha").val("");
     $("#save-url").html("");
     $("#repo").val("");
@@ -360,14 +367,37 @@ var Util = {
       _this.setSaveParameters(data);
     });
   },
-  // TODO: this function still relies on a sinatra route, but should be any easy fix.
   loadTemplateText: function(){
     var _this = this;
-    $.get("/doc", function(data){
-      Util.clearSaveParamters();
-      _this.addXMLContent(data);
-      _this.createPreviewContent(data);
-    });
+    var content = [
+      '<?xml version="1.0" encoding="UTF-8"?>\n',
+      '<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_lite.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?\n',
+      '<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_lite.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>\n',
+      '<TEI xmlns="http://www.tei-c.org/ns/1.0">\n',
+      '  <teiHeader>\n',
+      '    <fileDesc>\n',
+      '      <titleStmt>\n',
+      '        <title>Title</title>\n',
+      '      </titleStmt>\n',
+      '      <publicationStmt>\n',
+      '        <p>Publication information</p>\n',
+      '      </publicationStmt>\n',
+      '      <sourceDesc>\n',
+      '        <p>Information about the source</p>\n',
+      '      </sourceDesc>\n',
+      '    </fileDesc>\n',
+      '  </teiHeader>\n',
+      '  <text>\n',
+      '    <body>\n',
+      '      <p>Some text here.</p>\n',
+      '    </body>\n',
+      '  </text>\n',
+      '</TEI>'].join('');
+
+      Util.clearSaveParameters();
+      _this.addXMLContent(content);
+      _this.createPreviewContent(content);
+
   }
 }
 
@@ -678,12 +708,7 @@ var Pr = {
   }
 }
 
-var Doc = {
-  state: null,
-  set: function(data){
-    this.state = data;
-  }
-}
+
 
 var Repo = {
   state: null,
@@ -696,120 +721,4 @@ var Repo = {
       _this.set(data);
     });
   }
-}
-
-var Recent = {
-  files: [],
-  set: function(file){
-    this.files.push(file);
-  }
-}
-
-// note: after a file is saved, if you immediately navigate away and then come back to that file
-//github is sometimes still serviing the file, because it hasn't updated yet.
-//This could cause some real headaches for users.
-
-// TEI rendering
-
-// custom tei conversion that doesn't repeat registering elements
-// code pulled from CETEI library; registering elemeents fucntions is then cut-out
-var Rendering = {
-  tei_conversion: function(TEI, callback, perElementFn){
-
-  var TEI_dom = ( new DOMParser() ).parseFromString(TEI, "text/xml");
-  let convertEl = (el) => {
-          // Create new element. TEI elements get prefixed with 'tei-',
-          // TEI example elements with 'teieg-'. All others keep
-          // their namespaces and are copied as-is.
-          let newElement;
-          let copy = false;
-          switch (el.namespaceURI) {
-            case "http://www.tei-c.org/ns/1.0":
-              newElement = document.createElement("tei-" + el.tagName);
-              break;
-            case "http://www.tei-c.org/ns/Examples":
-              if (el.tagName == "egXML") {
-                newElement = document.createElement("teieg-" + el.tagName);
-                break;
-              }
-            case "http://relaxng.org/ns/structure/1.0":
-              newElement = document.createElement("rng-" + el.tagName);
-              break;
-            default:
-              newElement = document.importNode(el, false);
-              copy = true;
-          }
-          // Copy attributes; @xmlns, @xml:id, @xml:lang, and
-          // @rendition get special handling.
-          for (let att of Array.from(el.attributes)) {
-              if (!att.name.startsWith("xmlns") || copy) {
-                newElement.setAttribute(att.name, att.value);
-              } else {
-                if (att.name == "xmlns")
-                newElement.setAttribute("data-xmlns", att.value); //Strip default namespaces, but hang on to the values
-              }
-              if (att.name == "xml:id" && !copy) {
-                newElement.setAttribute("id", att.value);
-              }
-              if (att.name == "xml:lang" && !copy) {
-                newElement.setAttribute("lang", att.value);
-              }
-              if (att.name == "rendition") {
-                newElement.setAttribute("class", att.value.replace(/#/g, ""));
-              }
-          }
-          // Preserve element name so we can use it later
-          newElement.setAttribute("data-teiname", el.localName);
-          // If element is empty, flag it
-          if (el.childNodes.length == 0) {
-            newElement.setAttribute("data-empty", "");
-          }
-          // Turn <rendition scheme="css"> elements into HTML styles
-          if (el.localName == "tagsDecl") {
-            let style = document.createElement("style");
-            for (let node of Array.from(el.childNodes)){
-              if (node.nodeType == Node.ELEMENT_NODE && node.localName == "rendition" && node.getAttribute("scheme") == "css") {
-                let rule = "";
-                if (node.hasAttribute("selector")) {
-                  //rewrite element names in selectors
-                  rule += node.getAttribute("selector").replace(/([^#, >]+\w*)/g, "tei-$1").replace(/#tei-/g, "#") + "{\n";
-                  rule += node.textContent;
-                } else {
-                  rule += "." + node.getAttribute("xml:id") + "{\n";
-                  rule += node.textContent;
-                }
-                rule += "\n}\n";
-                style.appendChild(document.createTextNode(rule));
-              }
-            }
-            if (style.childNodes.length > 0) {
-              newElement.appendChild(style);
-              this.hasStyle = true;
-            }
-          }
-          // Get prefix definitions
-          if (el.localName == "prefixDef") {
-            this.prefixes.push(el.getAttribute("ident"));
-            this.prefixes[el.getAttribute("ident")] =
-              {"matchPattern": el.getAttribute("matchPattern"),
-              "replacementPattern": el.getAttribute("replacementPattern")};
-          }
-          for (let node of Array.from(el.childNodes)){
-              if (node.nodeType == Node.ELEMENT_NODE) {
-                  newElement.appendChild(  convertEl(node)  );
-              }
-              else {
-                  newElement.appendChild(node.cloneNode());
-              }
-          }
-          if (perElementFn) {
-            perElementFn(newElement);
-          }
-          return newElement;
-      }
-
-      var html = convertEl(TEI_dom.documentElement);
-      //console.log(html);
-      return html;
-}
 }
