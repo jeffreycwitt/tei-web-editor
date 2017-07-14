@@ -12,6 +12,7 @@ var ace = require('brace');
 
 var aceEditor;
 var Util = {
+  access_token: access_token,
   undarken: function(){
     $('#editor').removeClass("darkened");
     $('#preview').removeClass("darkened");
@@ -21,7 +22,15 @@ var Util = {
     $('#editor').addClass("darkened");
     $('#preview').addClass("darkened");
   },
-  access_token: access_token,
+  hideFileWindow: function(){
+    $(".file-window").removeClass("visible");
+    this.undarken();
+  },
+  fileNew: function(){
+    this.undarken();
+    $('.file-window').removeClass("visible")
+    this.loadTemplateText();
+  },
   retrieveAPIData: function(url, access_token){
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
     return $.get(url_with_access);

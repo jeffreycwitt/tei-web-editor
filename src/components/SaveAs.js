@@ -52,8 +52,13 @@ var SaveAs = {
     });
 
   },
-  displaySaveAsRepoList: function(url, access_token){
+  displaySaveAsRepoList: function(){
+    $('.file-window').removeClass("visible");
+    Util.darken();
+    $('#save').addClass("visible");
+    var url = "https://api.github.com/user/repos";
     url = url + "?per_page=100";
+    var access_token = Util.access_token;
     Util.retrieveAPIData(url, access_token).done(function(data){
       $("#repo-browser-branch").empty();
       $("#save-as-file-browser-list-wrapper").empty();

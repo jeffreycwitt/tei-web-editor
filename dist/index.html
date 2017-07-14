@@ -2,12 +2,14 @@
   <head>
     <title>TEI Web Editor</title>
     <link rel="stylesheet" type="text/css" href="mirador-2.4/css/mirador-combined.css">
+    <link rel="stylesheet" type="text/css" href="MiradorDisableZoom.css">
     <link rel="stylesheet" type="text/css" href="CETEI.css">
 
   </head>
   <body>
     <script src="bundle.js"></script>
     <script src="mirador-2.4/mirador.js"></script>
+    <script src="MiradorDisableZoom.js"></script>
     <script src="mirador-instance.js"></script>
 
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -31,10 +33,24 @@
             <!-- <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
               <ul class="dropdown-menu"> -->
-                <li><a href="#" id="file-new">New</a></li>
-                <li><a href="#" class="file-open-dir">Open</a></li>
-                <li><a href="#" id="file-open-save">Save</a></li>
-                <li><a href="#" id="file-pr">Review Request</a></li>
+                <li>
+                  <a href="#" id="file-new">
+                  <span class="glyphicon glyphicon-file"></span>
+                  New</a>
+                </li>
+                <li>
+                  <a href="#" class="file-open-dir">
+                  <span class="glyphicon glyphicon-folder-open"></span>
+                  Open</a>
+                </li>
+                <li>
+                  <a href="#" id="file-open-save">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  Save</a>
+                </li>
+                <li><a href="#" id="file-pr">
+                  <span class="glyphicon glyphicon-comment"></span>
+                  Review Request</a></li>
                 <li><a href="#" id="toggle-mirador">Toggle Mirador</a></li>
                 <li><a href="#" id="toggle-preview">Toggle Preview</a></li>
                 <li><a href="#" id="toggle-editor">Toggle Editor</a></li>
@@ -61,6 +77,9 @@
     </div>
   </div>
   <div id="dir" class="file-window">
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
     <div>
       <form id="file-manual">
         <div class="form-group">
@@ -89,6 +108,9 @@
     </div>
   </div>
   <div id="repo-browser" class="file-window">
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
     <p>
       <div id="repo-browser-branch">
       </div>
@@ -99,6 +121,9 @@
     </p>
   </div>
   <div id="save" class="file-window">
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
     <form id="save-form" style="float: left; width: 40%; box-sizing: border-box;">
       <div class="form-group">
         <label for="save-url">File Path</label><br/>
@@ -145,6 +170,9 @@
     </div>
   </div>
   <div id="pull-request-viewer" class="file-window">
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
     <div id="current-repo">
     </div>
     <div id="target-repo">

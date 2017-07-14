@@ -86,7 +86,15 @@ var Open = {
       }
     });
   },
-  displayOpenRepoList: function(url, access_token){
+  displayOpenRepoList: function(){
+    Util.darken();
+    $('.file-window').removeClass("visible")
+    $('#breadcrumbs').empty();
+    $("#repositories").empty();
+    $('#dir').addClass("visible");
+    
+    var access_token = Util.access_token
+    var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
     Util.retrieveAPIData(url, access_token).done(function(data){
       $("#repo-browser-branch").empty();

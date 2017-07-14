@@ -17,6 +17,7 @@ import Repo from "./Repo.js";
 import SaveAs from "./SaveAs.js";
 import Open from "./Open.js";
 import Pr from "./Pr.js";
+import KeyBoardShortCuts from "./KeyBoardShortCuts.js";
 
 
 var access_token = window.location.hash.substring(7);
@@ -35,6 +36,7 @@ var Main = {
   });
   aceEditor.setShowInvisibles(true);
   this.bindEventHandlers();
+  KeyBoardShortCuts.addBindings();
   Util.loadTemplateText();
 },
 bindEventHandlers: function(){
@@ -51,11 +53,12 @@ bindEventHandlers: function(){
     $("#preview").html(newText);
   });
 
+  $(document).on("click", ".close", function(){
+    Util.hideFileWindow();
+  });
   //load empty template
   $(document).on("click","#file-new", function(){
-    Util.undarken();
-    $('.file-window').removeClass("visible")
-    Util.loadTemplateText();
+    Util.fileNew();
   });
 
   $(document).on("click", "#toggle-mirador", function(){
@@ -109,22 +112,12 @@ bindEventHandlers: function(){
   });
 //open repository list
   $(document).on("click",".file-open-dir", function(){
-    Util.darken();
-    $('.file-window').removeClass("visible")
-    $('#breadcrumbs').empty();
-    $("#repositories").empty();
-    $('#dir').addClass("visible");
-    var url = "https://api.github.com/user/repos"
-    console.log(access_token);
-    Open.displayOpenRepoList(url, access_token);
+    Open.displayOpenRepoList();
   });
 //open save dialogue box
   $(document).on("click","#file-open-save", function(){
-    $('.file-window').removeClass("visible");
-    var url = "https://api.github.com/user/repos";
-    SaveAs.displaySaveAsRepoList(url, access_token);
-    Util.darken();
-    $('#save').addClass("visible");
+    SaveAs.displaySaveAsRepoList();
+
 
   });
   //opens list of branches in save as window
@@ -259,8 +252,7 @@ bindEventHandlers: function(){
   });
 
   $("#editor-wrapper").on("click", function(){
-    $(".file-window").removeClass("visible");
-    Util.undarken();
+    Util.hideFileWindow()
   });
 
   $("#save-form").submit(function(e){

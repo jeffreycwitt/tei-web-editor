@@ -9,6 +9,7 @@
     "express": "^4.15.3",
     "express-session": "^1.15.3",
     "lodash": "^4.17.4",
+    "mousetrap": "^1.6.1",
     "octokat": "^0.9.0",
     "webpack": "^3.0.0"
   },
