@@ -14,9 +14,14 @@ create file called github.json with the following config credentials
 	"client": "<ClientID>",
 	"secret": "<CLIENT SECRET"
 }
-
-make sure this files stays outside of your git history
+```
+make sure this file stays outside of your git history
 
 2. `webpack`
 
 3. `node server.js`
+
+## Contributors
+
+Jeffrey C. Witt (Loyola University Maryland)
+Rashmi Singhal (Harvard University)
