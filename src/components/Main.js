@@ -4,6 +4,10 @@ var base64 = require('base-64');
 var ace = require('brace');
 require('brace/mode/xml');
 require('brace/theme/kuroir');
+require('brace/ext/searchbox');
+require('brace/ext/settings_menu');
+
+
 global.jQuery = require('jQuery');
 var $ = global.jQuery;
 require('bootstrap-loader');
@@ -32,12 +36,14 @@ var Main = {
   aceEditor.session.setMode("ace/mode/xml");
   aceEditor.session.setOptions({
     tabSize: 2,
-    useSoftTabs: true
+    useSoftTabs: true,
   });
   aceEditor.setShowInvisibles(true);
-  this.bindEventHandlers();
+
   KeyBoardShortCuts.addBindings();
-  Util.loadTemplateText();
+
+  this.bindEventHandlers();
+  Util.loadTemplateText(true);
 },
 bindEventHandlers: function(){
   var _this = this;
@@ -49,7 +55,8 @@ bindEventHandlers: function(){
   aceEditor.on('change', function() {
     var newText = Renderer.tei_conversion(aceEditor.getValue(), function(data){
     });
-    //console.log(newText);
+    //change Doc state to modified
+    Doc.modified = true;
     $("#preview").html(newText);
   });
 

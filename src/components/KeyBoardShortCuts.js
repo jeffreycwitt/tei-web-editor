@@ -7,7 +7,10 @@ import Open from "./Open.js";
 import Util from "./Util.js";
 
 var KeyBoardShortCuts = {
+
   addBindings: function(){
+    //this commands aren't working when a user is inside the editor
+    //ace might have  a way to write custom key bindings so maybe these should be used instead
     Mousetrap.bind('command t s', function() {
       SaveAs.displaySaveAsRepoList();
       return false;
@@ -24,6 +27,7 @@ var KeyBoardShortCuts = {
       Util.fileNew();
       return false;
     });
+
   }
 }
 export default KeyBoardShortCuts;

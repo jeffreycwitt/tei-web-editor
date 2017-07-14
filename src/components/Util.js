@@ -62,7 +62,8 @@ var Util = {
     $("#branch").val(branch);
     $('#message').val("");
 
-    Doc.set(data)
+    Doc.set(data);
+    Doc.modified = !Doc.modified;
     Repo.retrieveAndSetRepoState("https://api.github.com/repos/" + repo, Util.access_token)
   },
   clearSaveParameters: function(){
@@ -75,18 +76,39 @@ var Util = {
     $('#message').val("");
 
     Doc.set(null);
+    Doc.modified = false;
     Repo.set(null);
   },
-  loadText: function(url, access_token){
-    var _this = this;
-    _this.retrieveAPIData(url, access_token).done(function(data){
-      var content = Util.parseXMLContent(data);
-      _this.addXMLContent(content);
-      _this.createPreviewContent(content);
-      _this.setSaveParameters(data);
-    });
+  //this function checks if there have been any changes to the current file since the last save
+  // other functions should use to prompt user from navigating away from unsaved content.
+  confirm: function(){
+    var confirmed;
+    console.log("Doc.modiifed in confirm function", Doc.modified);
+    if (Doc.modified){
+      if (confirm("This current document as been modified since it last save. Do you want to proceed? Unsaved changes will be lost.")){
+        confirmed = true;
+      }
+      else{
+        confirmed = false;
+      }
+    }
+    else{
+      confirmed = true;
+    }
+    return confirmed;
   },
-  loadTemplateText: function(){
+  loadText: function(url, access_token){
+    if (Util.confirm()){
+      var _this = this;
+      _this.retrieveAPIData(url, access_token).done(function(data){
+        var content = Util.parseXMLContent(data);
+        _this.addXMLContent(content);
+        _this.createPreviewContent(content);
+        _this.setSaveParameters(data);
+      });
+    }
+  },
+  loadTemplateText: function(confirm){
     var _this = this;
     var content = [
       '<?xml version="1.0" encoding="UTF-8"?>\n',
@@ -113,9 +135,14 @@ var Util = {
       '  </text>\n',
       '</TEI>'].join('');
 
-      Util.clearSaveParameters();
-      _this.addXMLContent(content);
-      _this.createPreviewContent(content);
+      if (confirm || Util.confirm()){
+        //order matters here; addXMLcontent will trigger and change in the editor
+        //which will toggle Doc.modified to true clearSaveParamters will return Doc.modified to false
+        _this.addXMLContent(content);
+        _this.createPreviewContent(content);
+        Util.clearSaveParameters();
+
+      }
 
   }
 }
