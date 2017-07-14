@@ -1,13 +1,16 @@
-var express = require('express')
-request = require('request'),
-	crypto = require('crypto');
-var session = require('express-session')
+var express = require('express');
+var request = require('request');
+var crypto = require('crypto');
 var github = require('./github.json')
+
+
 // Create our app
+//Oath pattern bascially follows https://github.com/keshavsaharia/github-oauth/blob/master/oauth.js
+//I don't think all of it is need, or it could possible be simplified for our needs
+//TODO: At the very least I think we should write detail comments for our selves
+
 
 var app = express();
-app.use(session({secret: 'ssshhhhh'}));
-
 
 const PORT = process.env.PORT || 4567;
 
@@ -21,12 +24,9 @@ var redirect = {};
  *
  * Redirect to the github OAuth flow
  */
-var sess;
+
 app.get('/login', function(req, res) {
-  sess=req.session
-  if (sess.token){
-    res.redirect('/test')
-  }
+
   res.statusCode = 302;
 
 	// Generate a random state string and initialize the value for the key
@@ -99,8 +99,7 @@ app.get('/token', function(req, res) {
 	// One-time token handoff
 	else {
 		var t = token[req.query.token];
-    sess.token = req.query.token;
-		delete token[req.query.token];
+    delete token[req.query.token];
 		res.status(200).send('{ "success": "true", "token": "' + t + '" }');
 	}
 });
@@ -108,6 +107,5 @@ app.get('/token', function(req, res) {
 app.use(express.static('dist'));
 
 app.listen(PORT, function(){
-  //console.log(sess.token);
-	console.log("Express server is up on port" + PORT);
+  console.log("Express server is up on port" + PORT);
 });
