@@ -1,9 +1,8 @@
-import _ from 'lodash';
-//import './CETEI.css';
 import './style.scss';
 
+import Octokat from "octokat";
 
-import Icon from './icon.png';
+
 
 var base64 = require('base-64');
 var ace = require('brace');

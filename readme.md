@@ -4,18 +4,19 @@
 
 1. `npm install`
 
-create file called github.json with the following config credentials
+Create file called github.json with the following config credentials
 
 ```json
 {
-  "redirect": "http://localhost:4567",
-	"url": "http://localhost:4567",
-	"scope": "repo user",
-	"client": "<ClientID>",
-	"secret": "<CLIENT SECRET"
+"redirect": "http://localhost:4567",
+"url": "http://localhost:4567",
+"scope": "repo user",
+"client": "<ClientID>",
+"secret": "<CLIENT SECRET"
 }
 ```
-make sure this file stays outside of your git history
+
+Make sure this file stays outside of your git history!
 
 2. `webpack`
 
@@ -23,5 +24,5 @@ make sure this file stays outside of your git history
 
 ## Contributors
 
-Jeffrey C. Witt (Loyola University Maryland)
-Rashmi Singhal (Harvard University)
+* Jeffrey C. Witt (Loyola University Maryland)
+* Rashmi Singhal (Harvard University)
