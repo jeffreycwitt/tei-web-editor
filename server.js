@@ -3,8 +3,8 @@ var request = require('request');
 var crypto = require('crypto');
 if (process.env.NODE_ENV === 'production'){
   var github = {
-    "redirect": "http://tei-web-editor.herokuapp.com",
-  	"url": "http://tei-web-editor.herokuapp.com",
+    "redirect": "https://tei-web-editor.herokuapp.com",
+  	"url": "https://tei-web-editor.herokuapp.com",
   	"scope": "repo user",
   	"client": process.env.CLIENT_ID,
   	"secret": process.env.CLIENT_SECRET
