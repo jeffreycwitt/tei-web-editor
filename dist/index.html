@@ -3,7 +3,9 @@
     <title>TEI Web Editor</title>
     <link rel="stylesheet" type="text/css" href="mirador-2.4/css/mirador-combined.css">
     <link rel="stylesheet" type="text/css" href="MiradorDisableZoom.css">
-    <link rel="stylesheet" type="text/css" href="CETEI.css">
+
+    <link rel="stylesheet" type="text/css" href="xmlstyles/default.css" title="default" class="preview-style-link">
+    <link rel="stylesheet" type="text/css" href="xmlstyles/lbp-1.0.0-critical.css" title="lbp-1.0.0-critical" class="preview-style-link">
 
   </head>
   <body>
@@ -11,6 +13,7 @@
     <script src="mirador-2.4/mirador.js"></script>
     <script src="MiradorDisableZoom.js"></script>
     <script src="mirador-instance.js"></script>
+    <!-- <script src="xmlstyles/lbp-1.0.0-critical.js" title="lbp-1.0.0-critical" class="preview-style-link"></script> -->
 
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
@@ -27,7 +30,7 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav" id="navbar-menu-list">
             <!-- <li><a href="/">Home</a></li>
             <li><a href="/editor">Editor</a></li> -->
             <!-- <li class="dropdown">
@@ -100,10 +103,10 @@
       </ul>
     </div>
     <div>
-      <h3>Suggested Repositories</h3>
+      <h3>Suggested Repositories to Start From</h3>
       <ul class="list-unstyled" id="suggested-repositories">
-        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta-texts/summahalensis">Fork https://api.github.com/repos/scta-texts/summahalensis</a></li>
-        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta/simple-tei-edition">Fork https://api.github.com/repos/scta/simple-tei-edition</a></li>
+        <!-- <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta-texts/summahalensis">Fork https://api.github.com/repos/scta-texts/summahalensis</a></li>
+        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta/simple-tei-edition">Fork https://api.github.com/repos/scta/simple-tei-edition</a></li> -->
       </ul>
     </div>
   </div>

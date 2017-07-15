@@ -5,6 +5,7 @@ import Util from "./Util.js";
 import Recent from "./Recent.js";
 
 var Open = {
+  recommendedRepos: {},
   displayOpenTree: function(repo_base, access_token, branch, branchSha, path, repo){
   //function displayTree(tree, path, branch, branchSha, repo, parent_tree_url){
   //function retrieveRepoTree(repo_base, access_token, branch, branchSha){
@@ -87,12 +88,13 @@ var Open = {
     });
   },
   displayOpenRepoList: function(){
+    var _this = this;
     Util.darken();
     $('.file-window').removeClass("visible")
     $('#breadcrumbs').empty();
     $("#repositories").empty();
     $('#dir').addClass("visible");
-    
+
     var access_token = Util.access_token
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
@@ -101,7 +103,8 @@ var Open = {
       $("#recentfiles").empty();
       if (Recent.files.length === 0) {
         $("#recentfiles").append('<li>No recent files available</li>');
-      } else {
+      }
+      else {
         for (var i = 0, len = Recent.files.length; i < len; i++) {
           $("#recentfiles").append('<li><a href="#" class="file-open-file" data-url="'+ Recent.files[i] + '">' + Recent.files[i] +'</a></li>');
         }
@@ -109,6 +112,13 @@ var Open = {
       for (var i = 0, len = data.length; i < len; i++) {
         $("#repositories").append('<li><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></li>');
       }
+      console.log(_this.recommendedRepos.length);
+      if (_this.recommendedRepos.length > 0){
+        for (var i = 0, len = _this.recommendedRepos.length; i < len; i++) {
+          $("#suggested-repositories").append("<li>Create a copy of: <a href='#' class='create-fork' data-url='" + Open.recommendedRepos[i].url +"'> " + Open.recommendedRepos[i].name + "</a>: " + Open.recommendedRepos[i].description + "</li>");
+        }
+      }
+
     });
   },
   createOpenFork: function(repo, access_token){

@@ -29,22 +29,24 @@ var aceEditor;
 
 
 var Main = {
-  init: function(){
-  console.log(access_token)
-  aceEditor = ace.edit("editor");
-  aceEditor.setTheme("ace/theme/kuroir");
-  aceEditor.session.setMode("ace/mode/xml");
-  aceEditor.session.setOptions({
-    tabSize: 2,
-    useSoftTabs: true,
-  });
-  aceEditor.setShowInvisibles(true);
+  init: function(customSettings){
+    console.log(access_token)
+    aceEditor = ace.edit("editor");
+    aceEditor.setTheme("ace/theme/kuroir");
+    aceEditor.session.setMode("ace/mode/xml");
+    aceEditor.session.setOptions({
+      tabSize: 2,
+      useSoftTabs: true,
+    });
+    aceEditor.setShowInvisibles(true);
 
-  KeyBoardShortCuts.addBindings();
+    KeyBoardShortCuts.addBindings();
 
-  this.bindEventHandlers();
-  Util.loadTemplateText(true);
-},
+    this.bindEventHandlers();
+    Open.recommendedRepos = customSettings.recommendedRepos;
+    this.createPreviewStylesList(customSettings.previewStyles)
+    Util.loadTemplateText(true);
+  },
 bindEventHandlers: function(){
   var _this = this;
   //This events need to be organized somehow perhaps just with better commenting.
@@ -280,8 +282,27 @@ bindEventHandlers: function(){
       "branch": branch
     }
     SaveAs.saveFile(url, commit_data, access_token);
-  });
-  }
+    });
+  $(document).on("click", ".select-preview-style", function(){
+    var styleName = $(this).attr("data-style-name");
+    _this.selectPreviewStyle(styleName);
+    });
+  },
   //end of event handling functions
+  selectPreviewStyle: function(styleName){
+    $("link[class='preview-style-link']").prop('disabled',true);
+    $("link[title='" + styleName + "']").prop('disabled',false);
+  },
+  createPreviewStylesList: function(previewStyles){
+    
+    var defaultStyle = 'default';
+    this.selectPreviewStyle(defaultStyle);
+    if (previewStyles.length > 1){
+      $("#navbar-menu-list").append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Preview Styles<span class="caret"></span></a><ul id="preview-styles-menu" class="dropdown-menu"></ul>');
+      for (var i = 0, len = previewStyles.length; i < len; i++) {
+        $("#preview-styles-menu").append("<li><a href='#' class='select-preview-style' data-style-name='" + previewStyles[i].name + "' title='" + previewStyles[i].description + "'>" + previewStyles[i].name + "</a></li>");
+      }
+    }
+  }
 }
 export default Main;
