@@ -1,9 +1,21 @@
 var express = require('express');
 var request = require('request');
 var crypto = require('crypto');
-var github = require('./github.json')
+if (process.env.NODE_ENV) === 'production'){
+  {
+    "redirect": "http://tei-web-editor.herokuapp.com",
+  	"url": "http://tei-web-editor.herokuapp.com",
+  	"scope": "repo user",
+  	"client": process.env.CLIENT_ID,
+  	"secret": process.env.CLIENT_SECRET
+  }
+}
+else {
+  var github = require('./github.json')
+}
 
 
+console.log(process.env.NODE_ENV);
 // Create our app
 //Oath pattern bascially follows https://github.com/keshavsaharia/github-oauth/blob/master/oauth.js
 //I don't think all of it is need, or it could possible be simplified for our needs
