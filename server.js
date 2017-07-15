@@ -15,7 +15,6 @@ else {
 }
 
 
-console.log(process.env.NODE_ENV);
 // Create our app
 //Oath pattern bascially follows https://github.com/keshavsaharia/github-oauth/blob/master/oauth.js
 //I don't think all of it is need, or it could possible be simplified for our needs

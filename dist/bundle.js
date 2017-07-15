@@ -10399,6 +10399,8 @@ var Util = {
     this.loadTemplateText();
   },
   retrieveAPIData: function(url, access_token){
+    // this should render obsolute the need for access token as a parameter.
+    var access_token = this.access_token
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
     return $.get(url_with_access);
   },
@@ -31557,6 +31559,7 @@ module.exports = function (css) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Pr_js__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__KeyBoardShortCuts_js__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Preview_js__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__User_js__ = __webpack_require__(85);
 //vendor imports
 
 var base64 = __webpack_require__(16);
@@ -31584,7 +31587,9 @@ __webpack_require__(19);
 
 
 
+
 var access_token = window.location.hash.substring(7);
+
 var aceEditor;
 
 
@@ -31603,6 +31608,9 @@ var Main = {
     __WEBPACK_IMPORTED_MODULE_9__KeyBoardShortCuts_js__["a" /* default */].addBindings();
 
     this.bindEventHandlers();
+    if (access_token){
+      __WEBPACK_IMPORTED_MODULE_11__User_js__["a" /* default */].retrieveAndSetUserState()
+    }
     __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].recommendedRepos = customSettings.recommendedRepos;
     __WEBPACK_IMPORTED_MODULE_10__Preview_js__["a" /* default */].createPreviewStylesList(customSettings.previewStyles)
     __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].loadTemplateText(true);
@@ -39086,6 +39094,41 @@ var Preview = {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Preview);
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
+
+/***/ }),
+/* 85 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Util_js__ = __webpack_require__(3);
+global.jQuery = __webpack_require__(2);
+var $ = global.jQuery;
+
+
+
+
+var User = {
+  state: null,
+  set: function(data){
+    this.state = data
+  },
+  retrieveAndSetUserState: function(){
+    var _this = this;
+    var url = "https://api.github.com/user";
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
+      _this.set(data);
+      _this.displayUserName(data);
+    });
+  },
+  displayUserName: function(data){
+    console.log(data);
+    $("#user-login-display").html('<a href="/login">' + data.login + '</a>');
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (User);
 
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
 

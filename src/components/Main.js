@@ -23,9 +23,11 @@ import Open from "./Open.js";
 import Pr from "./Pr.js";
 import KeyBoardShortCuts from "./KeyBoardShortCuts.js";
 import Preview from "./Preview.js";
+import User from "./User.js";
 
 
 var access_token = window.location.hash.substring(7);
+
 var aceEditor;
 
 
@@ -44,6 +46,9 @@ var Main = {
     KeyBoardShortCuts.addBindings();
 
     this.bindEventHandlers();
+    if (access_token){
+      User.retrieveAndSetUserState()
+    }
     Open.recommendedRepos = customSettings.recommendedRepos;
     Preview.createPreviewStylesList(customSettings.previewStyles)
     Util.loadTemplateText(true);

@@ -32,6 +32,8 @@ var Util = {
     this.loadTemplateText();
   },
   retrieveAPIData: function(url, access_token){
+    // this should render obsolute the need for access token as a parameter.
+    var access_token = this.access_token
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
     return $.get(url_with_access);
   },
