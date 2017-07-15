@@ -12,7 +12,7 @@ var KeyBoardShortCuts = {
     //this commands aren't working when a user is inside the editor
     //ace might have  a way to write custom key bindings so maybe these should be used instead
     Mousetrap.bind('command t s', function() {
-      SaveAs.displaySaveAsRepoList();
+      SaveAs.displayRepoList();
       return false;
     });
     Mousetrap.bind('esc', function(){
@@ -20,7 +20,7 @@ var KeyBoardShortCuts = {
       return false;
     });
     Mousetrap.bind('command t o', function(){
-      Open.displayOpenRepoList();
+      Open.displayRepoList();
       return false;
     });
     Mousetrap.bind('command t n', function(){

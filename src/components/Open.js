@@ -81,13 +81,12 @@ var Open = {
       $("#repo-browser-list").empty();
       $("#repo-browser").addClass("visible");
       $("#repo-browser-list").append('<h1>Available Branches</h1>');
-      //$("#repo-browser-list").append('<p><a href="#" class="file-open-dir">' + "Back to Repo List" +'</a></li>');
       for (var i = 0, len = data.length; i < len; i++) {
         $("#repo-browser-list").append('<li><a href="#" class="file-open-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a> --> create new branch --> <form id="create-new-branch"><input id="branch" name="branch" placeholder="gh-pages"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><input type="submit"/></form></li>');
       }
     });
   },
-  displayOpenRepoList: function(){
+  displayRepoList: function(){
     var _this = this;
     Util.darken();
     $('.file-window').removeClass("visible")
@@ -101,6 +100,7 @@ var Open = {
     Util.retrieveAPIData(url, access_token).done(function(data){
       $("#repo-browser-branch").empty();
       $("#recentfiles").empty();
+      $("#suggested-repositories").empty();
       if (Recent.files.length === 0) {
         $("#recentfiles").append('<li>No recent files available</li>');
       }
@@ -121,8 +121,9 @@ var Open = {
 
     });
   },
-  createOpenFork: function(repo, access_token){
-      var url = "https://api.github.com/repos/" + repo + "/forks";
+  createFork: function(url){
+      var url = url + "/forks";
+      var access_token = Util.access_token
       var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
       $.ajax({
         url: url_with_access, // your api url
@@ -139,6 +140,12 @@ var Open = {
         }
       });
 
+  },
+  openFile: function(url){
+    $('.file-window').removeClass("visible");
+    Util.undarken();
+    Recent.set(url);
+    Util.loadText(url, Util.access_token)
   }
 }
 

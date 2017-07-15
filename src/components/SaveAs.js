@@ -52,7 +52,7 @@ var SaveAs = {
     });
 
   },
-  displaySaveAsRepoList: function(){
+  displayRepoList: function(){
     $('.file-window').removeClass("visible");
     Util.darken();
     $('#save').addClass("visible");

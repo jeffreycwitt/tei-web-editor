@@ -1,7 +1,9 @@
 var Recent = {
   files: [],
   set: function(file){
-    this.files.push(file);
+    if (!this.files.includes(file)){
+      this.files.push(file);
+    }
   }
 }
 

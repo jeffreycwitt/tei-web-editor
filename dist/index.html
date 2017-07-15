@@ -42,12 +42,12 @@
                   New</a>
                 </li>
                 <li>
-                  <a href="#" class="file-open-dir">
+                  <a href="#" class="display-repo-list">
                   <span class="glyphicon glyphicon-folder-open"></span>
                   Open</a>
                 </li>
                 <li>
-                  <a href="#" id="file-open-save">
+                  <a href="#" id="display-saveAs-repo-list">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   Save</a>
                 </li>
@@ -109,6 +109,15 @@
         <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta/simple-tei-edition">Fork https://api.github.com/repos/scta/simple-tei-edition</a></li> -->
       </ul>
     </div>
+    <div>
+      <h3>Fork another repository</h3>
+      <form id="fork-manual">
+        <div class="form-group">
+          <input type="text" class="form-control" id="fork-url" name="fork-url">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
   </div>
   <div id="repo-browser" class="file-window">
     <button type="button" class="close" aria-label="Close">
@@ -119,7 +128,7 @@
       </div>
       <div id="breadcrumbs">
       </div>
-      <a href="#" class="file-open-dir">Back to Repository List</a></li>
+      <a href="#" class="display-repo-list">Back to Repository List</a></li>
       <div id="repo-browser-list"></div>
     </p>
   </div>

@@ -6,6 +6,7 @@ var $ = global.jQuery;
 
 import App from "./components/Main.js";
 
+
 var customSettings = {
   recommendedRepos: [
     {
@@ -24,7 +25,16 @@ var customSettings = {
       description: "A customized styling for xml docs created to comply with the LombardPress-1.0.0-Critical customized TEI Schema"
     }
   ]
+
 }
+
+//preview styles currently have to select from supported options of which there are currently tei-keywords
+// default and lbp-1.0.0-critical
+// supported styles can be added by adding a css style sheet in dist/xmlstyles where the file named after the style name.
+// and corresponding <link> element needs to be added to the index.html file
+// required js event bindings for a given style currently need to be added to the Preview.js file.
+
+
 
 
 $(document).ready(function(){
