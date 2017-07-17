@@ -2,7 +2,7 @@
   "name": "tei-editor",
   "version": "1.0.0",
   "description": "",
-  "main": "webpack.config.js",
+  "main": "main.js",
   "dependencies": {
     "base-64": "^0.1.0",
     "brace": "^0.10.0",
@@ -22,6 +22,7 @@
     "bootstrap-loader": "^2.1.0",
     "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.28.4",
+    "electron": "^1.6.11",
     "file-loader": "^0.11.2",
     "jquery": "^3.2.1",
     "node-sass": "^4.5.3",

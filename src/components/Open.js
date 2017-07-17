@@ -29,7 +29,7 @@ var Open = {
     Util.retrieveAPIData(url, access_token).done(function(data){
 
       var tree = data.tree
-      
+
       var repoUrl = "https://api.github.com/repos/" + repo;
       $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
 
@@ -63,7 +63,7 @@ var Open = {
 
         success: function(data, status, res) {
           var repo_base = "https://api.github.com/repos/" + repo;
-          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, repo)
+          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, "", repo)
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -90,34 +90,34 @@ var Open = {
   },
   displayRepoList: function(){
     var _this = this;
+
     Util.darken();
     $('.file-window').removeClass("visible")
-    $('#breadcrumbs').empty();
-    $("#repositories").empty();
     $('#dir').addClass("visible");
+    $("#repo-browser-branch").empty();
+    $("#recentfiles > tbody").empty();
+    $("#repositories > tbody").empty();
+    $("#suggested-repositories > tbody").empty();
 
     var access_token = Util.access_token
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
     Util.retrieveAPIData(url, access_token).done(function(data){
-      $("#repo-browser-branch").empty();
-      $("#recentfiles").empty();
-      $("#suggested-repositories").empty();
+
       if (Recent.files.length === 0) {
-        $("#recentfiles").append('<li>No recent files available</li>');
+        $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
       else {
         for (var i = 0, len = Recent.files.length; i < len; i++) {
-          $("#recentfiles").append('<li><a href="#" class="file-open-file" data-url="'+ Recent.files[i] + '">' + Recent.files[i] +'</a></li>');
+          $("#recentfiles > tbody").append('<tr><td><a href="#" class="file-open-file" data-url="'+ Recent.files[i] + '">' + Recent.files[i] +'</a></td></tr>');
         }
       }
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repositories").append('<li><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></li>');
+        $("#repositories > tbody").append('<tr><td><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
       }
-      console.log(_this.recommendedRepos.length);
       if (_this.recommendedRepos.length > 0){
         for (var i = 0, len = _this.recommendedRepos.length; i < len; i++) {
-          $("#suggested-repositories").append("<li>Create a copy of: <a href='#' class='create-fork' data-url='" + Open.recommendedRepos[i].url +"'> " + Open.recommendedRepos[i].name + "</a>: " + Open.recommendedRepos[i].description + "</li>");
+          $("#suggested-repositories > tbody").append("<tr><td>Create a copy of: <a href='#' class='create-fork' data-url='" + Open.recommendedRepos[i].url +"'> " + Open.recommendedRepos[i].name + "</a>: " + Open.recommendedRepos[i].description + "</td></tr>");
         }
       }
 

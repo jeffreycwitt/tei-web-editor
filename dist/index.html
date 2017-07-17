@@ -94,20 +94,24 @@
     </div>
     <div>
       <h3>Recent Files</h3>
-      <ul class="list-unstyled" id="recentfiles">
-      </ul>
+      <table id="recentfiles" class="table table-condensed">
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <div>
       <h3>My Repositories</h3>
-      <ul class="list-unstyled" id="repositories">
-      </ul>
+      <table id="repositories" class="table table-condensed">
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <div>
       <h3>Suggested Repositories to Start From</h3>
-      <ul class="list-unstyled" id="suggested-repositories">
-        <!-- <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta-texts/summahalensis">Fork https://api.github.com/repos/scta-texts/summahalensis</a></li>
-        <li><a href="#" class="create-fork" data-url="https://api.github.com/repos/scta/simple-tei-edition">Fork https://api.github.com/repos/scta/simple-tei-edition</a></li> -->
-      </ul>
+      <table id="suggested-repositories" class="table table-condensed">
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <div>
       <h3>Fork another repository</h3>
@@ -126,9 +130,7 @@
     <p>
       <div id="repo-browser-branch">
       </div>
-      <div id="breadcrumbs">
-      </div>
-      <table id="repo-browser-list" class="table table-condensed table-hover">
+      <table id="repo-browser-list" class="table table-condensed">
         <thead>
         </thead>
         <tbody>
@@ -141,18 +143,18 @@
     <button type="button" class="close" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
-    <form id="save-form" style="float: left; width: 40%; box-sizing: border-box;">
-      <div class="form-group">
-        <label for="save-url">File Path</label><br/>
-        <p type="text" name="save-url" id="save-url" style="word-wrap: break-word;"/>
-      </div>
+    <div style="margin-bottom: 14px; border-bottom: 1px solid black;">
+      <label for="save-url">File Path</label>
+      <p type="text" name="save-url" id="save-url" style="word-wrap: break-word;"/>
+    </div>
+    <form id="save-form" style="float: left; width: 30%; box-sizing: border-box;">
       <div class="form-group">
         <label for="repo">Repo</label><br/>
-        <input type="text" name="repo" id="repo"/>
+        <input type="text" name="repo" id="repo" disabled class="input-disabled"/>
       </div>
       <div class="form-group">
         <label for="path">Path</label><br/>
-        <input type="text" name="path" id="path"/>
+        <input type="text" name="path" id="path" disabled class="input-disabled"/>
       </div>
       <div class="form-group">
         <label for="file-name">Filename</label><br/>
@@ -160,11 +162,11 @@
       </div>
       <div class="form-group">
         <label for="branch">Branch</label><br/>
-        <input type="text" name="branch" id="branch"/>
+        <input type="text" name="branch" id="branch" disabled class="input-disabled"/>
       </div>
       <div class="form-group">
         <label for="sha">Last Commit</label><br/>
-        <input type="text" name="sha" id="sha"/>
+        <input type="text" name="sha" id="sha" disabled class="input-disabled"/>
       </div>
       <div class="form-group">
         <label for="branch">Message</label><br/>
@@ -174,16 +176,13 @@
         <input type="submit" id="save" value="save"/>
       </div>
     </form>
-    <div id="save-as-file-browser" style="float: left; width: 60%; box-sizing: border-box; border-left: 1px dotted black;">
-      <div style="margin: 2px; padding: 2px; border-bottom: 1px dotted black;">
-        <p>Create new repository</p>
-        <form id="create-new-repo">
-          <input type="text" name='new-repo-name' id='new-repo-name' placeholder='new-repo-name'/>
-          <input type="submit"/>
-        </form>
-      </div>
-      <ul id="save-as-file-browser-list-wrapper">
-      </ul>
+    <div id="save-as-file-browser" style="float: left; width: 70%; box-sizing: border-box;">
+      <table id="save-as-file-browser-list-wrapper" class="table table-condensed">
+        <tbody>
+        </tbody>
+      <table>
+    </div>
+    <div id="save-as-new-repo-or-directory" style="margin: 2px; padding: 2px;">
     </div>
   </div>
   <div id="pull-request-viewer" class="file-window">

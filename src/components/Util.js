@@ -144,8 +144,7 @@ var Util = {
         _this.createPreviewContent(content);
         Util.clearSaveParameters();
 
-      }
-
+    }
   }
 }
 

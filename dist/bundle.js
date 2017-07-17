@@ -10511,8 +10511,7 @@ var Util = {
         _this.createPreviewContent(content);
         Util.clearSaveParameters();
 
-      }
-
+    }
   }
 }
 
@@ -31084,7 +31083,7 @@ var SaveAs = {
       }
     });
   },
-  displaySaveAsTree: function(url, branch, branchSha, access_token){
+  displaySaveAsTree: function(url, branch, branchSha, access_token, repo, path){
     var tree_url = url;
     if ( url.includes("/git/trees/")){
       var tree_url = url;
@@ -31093,20 +31092,25 @@ var SaveAs = {
       var tree_url = url + "/git/trees/" + branch;
     }
 
-    $("#save-as-file-browser-list-wrapper").empty();
+    $("#save-as-file-browser-list-wrapper > tbody").empty();
+    $("#save-as-new-repo-or-directory").empty();
+    $("#save-as-file-browser > p" ).remove();
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(tree_url, access_token).done(function(data){
       var tree = data.tree;
+      var repoUrl = "https://api.github.com/repos/" + repo;
+      $("#save-as-file-browser").prepend('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
       for (var i = 0, len = data.tree.length; i < len; i++) {
         if (tree[i].type === 'blob' && tree[i].path.includes('.xml')){
-          $("#save-as-file-browser-list-wrapper").append('<li style="color: gray">' + tree[i].path +'</a></li>');
+          $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td style="color: gray">' + tree[i].path +'</a></td></tr>');
         }
         else if (tree[i].type === 'blob' && !tree[i].path.includes('.xml')){
-          $("#save-as-file-browser-list-wrapper").append('<li style="color: gray">' + tree[i].path +'</li>');
+          $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td style="color: gray">' + tree[i].path +'</td></tr>');
         }
         else if (tree[i].type === 'tree'){
-          $("#save-as-file-browser-list-wrapper").append('<li><a href="#" class="file-open-save-as-path" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + tree[i].path + '">' + tree[i].path +'</a></li>');
+          $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td><a href="#" class="file-open-save-as-path" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
       }
+      $("#save-as-new-repo-or-directory").append('<p>Create new directory</p><form id="create-new-directory"><input type="text" name="new-dir-name" id="new-dir-name" placeholder="new-dir-name"/><input type="submit"/></form>');
     });
 
   },
@@ -31119,21 +31123,26 @@ var SaveAs = {
     var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
       $("#repo-browser-branch").empty();
-      $("#save-as-file-browser-list-wrapper").empty();
+      $("#save-as-file-browser-list-wrapper > tbody").empty();
+      $("#save-as-new-repo-or-directory").empty();
+      $("#save-as-file-browser > p" ).remove();
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#save-as-file-browser-list-wrapper").append('<li><a href="#" class="file-open-save-as-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></li>');
+        $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td><a href="#" class="file-open-save-as-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
       }
+      $("#save-as-new-repo-or-directory").append('<p>Create new repository</p><form id="create-new-repo"><input type="text" name="new-repo-name" id="new-repo-name" placeholder="new-repo-name"/><input type="submit"/></form>');
     });
   },
   displaySaveAsRepoBranchList: function(repo_base, access_token){
     var url = repo_base + "/branches";
     var repo = repo_base.split("https://api.github.com/repos/")[1];
     $("#repo-browser-branch").empty();
-    $("#save-as-file-browser-list-wrapper").empty();
+    $("#save-as-file-browser-list-wrapper > tbody").empty();
+    $("#save-as-new-repo-or-directory").empty();
+    $("#save-as-file-browser > p" ).remove();
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
-      $("#save-as-file-browser-list-wrapper").empty();
+      //$("#save-as-file-browser-list-wrapper").empty();
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#save-as-file-browser-list-wrapper").append('<li><a href="#" class="file-open-save-as-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a> --> create new branch --> <form id="create-new-save-as-branch"><input id="branch" name="branch" placeholder="gh-pages"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><input type="submit"/></form></li>');
+        $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td><a href="#" class="file-open-save-as-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '" data-repo="' + repo + '" data-path="">' + data[i].name +'</a></td><td><form id="create-new-save-as-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></form></li>');
       }
     });
   },
@@ -31167,10 +31176,10 @@ var SaveAs = {
   },
   createNewRepo: function(name){
     var _this = this;
-    access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
+    var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
     var url = "https://api.github.com/user/repos"
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
-    content = {
+    var content = {
       "name": name,
       "auto_init": true
     }
@@ -31182,7 +31191,7 @@ var SaveAs = {
       data: JSON.stringify(content),
 
       success: function(data, status, res) {
-        repo = res.responseJSON.full_name
+        var repo = res.responseJSON.full_name;
         $("#repo").val(repo);
         var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
         $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
@@ -31238,7 +31247,7 @@ var Open = {
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
 
       var tree = data.tree
-      
+
       var repoUrl = "https://api.github.com/repos/" + repo;
       $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
 
@@ -31272,7 +31281,7 @@ var Open = {
 
         success: function(data, status, res) {
           var repo_base = "https://api.github.com/repos/" + repo;
-          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, repo)
+          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, "", repo)
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -31299,34 +31308,34 @@ var Open = {
   },
   displayRepoList: function(){
     var _this = this;
+
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].darken();
     $('.file-window').removeClass("visible")
-    $('#breadcrumbs').empty();
-    $("#repositories").empty();
     $('#dir').addClass("visible");
+    $("#repo-browser-branch").empty();
+    $("#recentfiles > tbody").empty();
+    $("#repositories > tbody").empty();
+    $("#suggested-repositories > tbody").empty();
 
     var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
-      $("#repo-browser-branch").empty();
-      $("#recentfiles").empty();
-      $("#suggested-repositories").empty();
+
       if (__WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files.length === 0) {
-        $("#recentfiles").append('<li>No recent files available</li>');
+        $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
       else {
         for (var i = 0, len = __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files.length; i < len; i++) {
-          $("#recentfiles").append('<li><a href="#" class="file-open-file" data-url="'+ __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] + '">' + __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] +'</a></li>');
+          $("#recentfiles > tbody").append('<tr><td><a href="#" class="file-open-file" data-url="'+ __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] + '">' + __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] +'</a></td></tr>');
         }
       }
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repositories").append('<li><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></li>');
+        $("#repositories > tbody").append('<tr><td><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
       }
-      console.log(_this.recommendedRepos.length);
       if (_this.recommendedRepos.length > 0){
         for (var i = 0, len = _this.recommendedRepos.length; i < len; i++) {
-          $("#suggested-repositories").append("<li>Create a copy of: <a href='#' class='create-fork' data-url='" + Open.recommendedRepos[i].url +"'> " + Open.recommendedRepos[i].name + "</a>: " + Open.recommendedRepos[i].description + "</li>");
+          $("#suggested-repositories > tbody").append("<tr><td>Create a copy of: <a href='#' class='create-fork' data-url='" + Open.recommendedRepos[i].url +"'> " + Open.recommendedRepos[i].name + "</a>: " + Open.recommendedRepos[i].description + "</td></tr>");
         }
       }
 
@@ -31466,7 +31475,7 @@ exports = module.exports = __webpack_require__(10)(undefined);
 
 
 // module
-exports.push([module.i, ".file-window {\n  transition: all 1s;\n  display: none;\n  position: fixed;\n  top: 20%;\n  left: 20%;\n  width: 60%;\n  height: 60%;\n  overflow: scroll;\n  box-sizing: border-box;\n  padding: 1% 2% 2% 2%;\n  z-index: 18000;\n  background-color: #e7e7e7;\n  color: #333333; }\n\n.visible {\n  transition: all 1s;\n  display: block; }\n\n/* styling for individual windows */\n#mirador-viewer {\n  width: 100%;\n  height: 40%;\n  position: relative;\n  top: 0; }\n\n.window {\n  box-sizing: border-box;\n  width: 50%;\n  float: left;\n  overflow-y: scroll; }\n\n.no-padding {\n  padding-left: 0 !important;\n  padding-right: 0 !important; }\n\n.darkened {\n  transition: all 1s;\n  -webkit-box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8);\n  -moz-box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8);\n  box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8); }\n\ntextarea.acce_text-input {\n  border: none;\n  overflow: auto;\n  outline: none;\n  -webkit-box-shadow: none;\n  -moz-box-shadow: none;\n  box-shadow: none; }\n\n#editor-wrapper {\n  display: flex;\n  flex-direction: column;\n  /* Firefox */\n  height: -moz-calc(100% - 50px);\n  /* WebKit */\n  height: -webkit-calc(100% - 50px);\n  /* Opera */\n  height: -o-calc(100% - 50px);\n  /* Standard */\n  height: calc(100% - 50px); }\n\n#xml-wrapper {\n  flex: 1;\n  display: flex;\n  width: 100%;\n  flex-direction: row; }\n\n#editor {\n  transition: all 1s;\n  flex: 1; }\n\n#preview {\n  transition: all 1s;\n  flex: 1;\n  padding-left: 2%;\n  padding-right: 2%; }\n\nbody {\n  margin-top: 50px;\n  height: 100%;\n  background-color: #e7e7e7;\n  color: #333333; }\n", ""]);
+exports.push([module.i, ".file-window {\n  transition: all 1s;\n  display: none;\n  position: fixed;\n  top: 20%;\n  left: 20%;\n  width: 60%;\n  height: 60%;\n  overflow: scroll;\n  box-sizing: border-box;\n  padding: 1% 2% 2% 2%;\n  z-index: 18000;\n  background-color: #e7e7e7;\n  color: #333333; }\n\n.visible {\n  transition: all 1s;\n  display: block; }\n\n/* styling for individual windows */\n.input-disabled {\n  background-color: #e7e7e7; }\n\n#mirador-viewer {\n  width: 100%;\n  height: 40%;\n  position: relative;\n  top: 0; }\n\n.window {\n  box-sizing: border-box;\n  width: 50%;\n  float: left;\n  overflow-y: scroll; }\n\n.no-padding {\n  padding-left: 0 !important;\n  padding-right: 0 !important; }\n\n.darkened {\n  transition: all 1s;\n  -webkit-box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8);\n  -moz-box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8);\n  box-shadow: 0px 0px 1px 5000px rgba(0, 0, 0, 0.8); }\n\ntextarea.acce_text-input {\n  border: none;\n  overflow: auto;\n  outline: none;\n  -webkit-box-shadow: none;\n  -moz-box-shadow: none;\n  box-shadow: none; }\n\n#editor-wrapper {\n  display: flex;\n  flex-direction: column;\n  /* Firefox */\n  height: -moz-calc(100% - 50px);\n  /* WebKit */\n  height: -webkit-calc(100% - 50px);\n  /* Opera */\n  height: -o-calc(100% - 50px);\n  /* Standard */\n  height: calc(100% - 50px); }\n\n#xml-wrapper {\n  flex: 1;\n  display: flex;\n  width: 100%;\n  flex-direction: row; }\n\n#editor {\n  transition: all 1s;\n  flex: 1; }\n\n#preview {\n  transition: all 1s;\n  flex: 1;\n  padding-left: 2%;\n  padding-right: 2%; }\n\nbody {\n  margin-top: 50px;\n  height: 100%;\n  background-color: #e7e7e7;\n  color: #333333; }\n", ""]);
 
 // exports
 
@@ -31819,24 +31828,29 @@ var Main = {
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
+      var repo = $(this).attr("data-repo");
+      var path = $(this).attr("data-path");
       $("#branch").val(branch);
       $("#sha").val(branchSha);
-      var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
+      //var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
+      $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
       //retrieveDirectoryCommits(url, access_token)
       //retrieveRepoTree(url, access_token, branch, branchSha);
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
     });
     $(document).on("click", ".file-open-save-as-path", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var path = $(this).attr("data-path");
-      var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      var repo = $(this).attr("data-repo");
+      var path_segment = path.length > 0 ? path + "/" : "";
+      $("#path").val(path);
+      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
       //retrieveDirectoryCommits(url, access_token)
       //retrieveRepoTree(url, access_token, branch, branchSha);
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
     });
 
     // BEGIN events keep saveAs form input values in sync with directory browsing
@@ -31863,7 +31877,7 @@ var Main = {
       var textContent = aceEditor.getValue();
       var content = base64.encode(textContent);
 
-      var url = $(this).find("#save-url").text();
+      var url = $("#save-url").text();
       var branch = $(this).find("#branch").val();
       var sha = $(this).find("#sha").val();
       var message = $(this).find("#message").val();

@@ -233,24 +233,29 @@ var Main = {
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
+      var repo = $(this).attr("data-repo");
+      var path = $(this).attr("data-path");
       $("#branch").val(branch);
       $("#sha").val(branchSha);
-      var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
+      //var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
+      $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
       //retrieveDirectoryCommits(url, access_token)
       //retrieveRepoTree(url, access_token, branch, branchSha);
-      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token);
+      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
     });
     $(document).on("click", ".file-open-save-as-path", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var path = $(this).attr("data-path");
-      var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      var repo = $(this).attr("data-repo");
+      var path_segment = path.length > 0 ? path + "/" : "";
+      $("#path").val(path);
+      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
       //retrieveDirectoryCommits(url, access_token)
       //retrieveRepoTree(url, access_token, branch, branchSha);
-      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token);
+      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
     });
 
     // BEGIN events keep saveAs form input values in sync with directory browsing
@@ -277,7 +282,7 @@ var Main = {
       var textContent = aceEditor.getValue();
       var content = base64.encode(textContent);
 
-      var url = $(this).find("#save-url").text();
+      var url = $("#save-url").text();
       var branch = $(this).find("#branch").val();
       var sha = $(this).find("#sha").val();
       var message = $(this).find("#message").val();
