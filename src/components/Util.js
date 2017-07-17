@@ -7,8 +7,7 @@ import Doc from "./Doc.js";
 import Recent from "./Recent.js";
 import Repo from "./Repo.js";
 
-//var access_token = window.location.hash.substring(7);
-var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
+var access_token = window.location.hash.substring(7);
 var ace = require('brace');
 
 var aceEditor;
