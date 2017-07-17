@@ -10374,8 +10374,7 @@ var base64 = __webpack_require__(16);
 
 
 
-//var access_token = window.location.hash.substring(7);
-var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
+var access_token = window.location.hash.substring(7);
 var ace = __webpack_require__(17);
 
 var aceEditor;
@@ -31613,8 +31612,7 @@ __webpack_require__(19);
 
 
 
-//var access_token = window.location.hash.substring(7);
-var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
+var access_token = window.location.hash.substring(7);
 var aceEditor;
 
 
