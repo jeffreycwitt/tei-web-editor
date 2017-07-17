@@ -41,7 +41,7 @@ var SaveAs = {
     Util.retrieveAPIData(tree_url, access_token).done(function(data){
       var tree = data.tree;
       var repoUrl = "https://api.github.com/repos/" + repo;
-      $("#save-as-file-browser").prepend('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
+      $("#save-as-file-browser").prepend('<p><a href="#" class="display-saveAs-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-save-as-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
       for (var i = 0, len = data.tree.length; i < len; i++) {
         if (tree[i].type === 'blob' && tree[i].path.includes('.xml')){
           $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td style="color: gray">' + tree[i].path +'</a></td></tr>');
@@ -53,7 +53,6 @@ var SaveAs = {
           $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td><a href="#" class="file-open-save-as-path" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
       }
-      $("#save-as-new-repo-or-directory").append('<p>Create new directory</p><form id="create-new-directory"><input type="text" name="new-dir-name" id="new-dir-name" placeholder="new-dir-name"/><input type="submit"/></form>');
     });
 
   },

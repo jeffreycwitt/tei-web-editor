@@ -68,7 +68,7 @@ var Main = {
     });
 
     //open saveAs dialogue box with repository list
-    $(document).on("click","#display-saveAs-repo-list", function(){
+    $(document).on("click",".display-saveAs-repo-list", function(){
       SaveAs.displayRepoList();
     });
 
