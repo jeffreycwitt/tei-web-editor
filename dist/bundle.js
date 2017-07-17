@@ -10374,7 +10374,8 @@ var base64 = __webpack_require__(16);
 
 
 
-var access_token = window.location.hash.substring(7);
+//var access_token = window.location.hash.substring(7);
+var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
 var ace = __webpack_require__(17);
 
 var aceEditor;
@@ -10668,17 +10669,39 @@ var Recent = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(global) {global.jQuery = __webpack_require__(2);
+var $ = global.jQuery;
+
 var Doc = {
   state: null,
   modified: true,
   set: function(data){
+    console.log(data);
     this.state = data;
+    this.displayCurrentDoc(data);
+  },
+  displayCurrentDoc(data){
+    $("#document-info").remove();
+    if (data){
+      var url = data.url
+      var branch = url.split("?ref=")[1]
+      console.log(branch);
+      var repo = url.split("https://api.github.com/repos/")[1].split("/contents/")[0];
+      if (branch === "gh-pages"){
+        $("#navbar-menu-list").append('<li id="document-info" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Current doc: ' + data.name + '<span class="caret"></span></a><ul id="document-info-list" class="dropdown-menu"></ul></li>');
+        var ghpagesLink = 'http://' + repo.split('/')[0] +'.github.io/' + repo.split('/')[1];
+        $("#document-info-list").append("<li><a href='" + ghpagesLink + "' target='_blank'>View on Github Pages</a></li>");
+      }
+      else{
+        $("#navbar-menu-list").append('<li id="document-info"><a>Current doc: ' + data.name + '</a></li>');
+      }
+    }
   }
-
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Doc);
 
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
 
 /***/ }),
 /* 9 */
@@ -31196,7 +31219,10 @@ var Open = {
   displayOpenTree: function(repo_base, access_token, branch, branchSha, path, repo){
   //function displayTree(tree, path, branch, branchSha, repo, parent_tree_url){
   //function retrieveRepoTree(repo_base, access_token, branch, branchSha){
-    $("#repo-browser-list").empty();
+    $("#repo-browser-list > tbody").empty();
+    $("#repo-browser-list > h3").remove();
+    $("#repo-browser-list > thead").empty();
+
     $("#repo-browser-branch").empty();
     $("#repo-browser").addClass("visible");
 
@@ -31211,26 +31237,21 @@ var Open = {
     }
 
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+
       var tree = data.tree
-      if (branch === "gh-pages"){
-        $("#repo-browser-branch").html('<p>' + branch + '</p><p><a href="http://' + repo.split('/')[0] +'.github.io/' + repo.split('/')[1] + '" target="_blank">View on gh-pages</a></p>');
-      }
-      else{
-        $("#repo-browser-branch").html('<p>' + branch + '</p>');
-      }
-      if (path){
-        //bug, this keeps appending even when you are moving back up the tree
-        $("#breadcrumbs").append(' / <a href="#" class="file-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ parent_tree_url + '" data-path="' + path + '">' + path.split("/").pop() +'</a>');
-      }
+      
+      var repoUrl = "https://api.github.com/repos/" + repo;
+      $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
+
       for (var i = 0, len = tree.length; i < len; i++) {
         if (tree[i].type === 'blob' && tree[i].path.includes('.xml')){
-          $("#repo-browser-list").append('<li><a href="#" class="file-open-file-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></li>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-file-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
         else if (tree[i].type === 'blob' && !tree[i].path.includes('.xml')){
-          $("#repo-browser-list").append('<li style="color: gray">' + tree[i].path +'</li>');
+          $("#repo-browser-list > tbody").append('<tr><td class="disabled">' + tree[i].path +'</td></tr>');
         }
         else if (tree[i].type === 'tree'){
-          $("#repo-browser-list").append('<li><a href="#" class="file-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></li>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
       }
     });
@@ -31265,11 +31286,15 @@ var Open = {
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
 
       var repo = repo_base.split("https://api.github.com/repos/")[1];
-      $("#repo-browser-list").empty();
+      //TODO Needs to refactor in to one "clear" function; this is repeated below in the display tree function
+      $("#repo-browser-list > tbody").empty();
+      $("#repo-browser-list > h3").remove();
+      $("#repo-browser-list > thead").empty();
       $("#repo-browser").addClass("visible");
-      $("#repo-browser-list").append('<h1>Available Branches</h1>');
+
+      $("#repo-browser-list > thead").append('<tr><th>Branch</th><th>Create New Branch</th></tr>');
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repo-browser-list").append('<li><a href="#" class="file-open-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a> --> create new branch --> <form id="create-new-branch"><input id="branch" name="branch" placeholder="gh-pages"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><input type="submit"/></form></li>');
+        $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a></td><td><form id="create-new-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></td></tr>');
       }
     });
   },
@@ -31588,8 +31613,8 @@ __webpack_require__(19);
 
 
 
-var access_token = window.location.hash.substring(7);
-
+//var access_token = window.location.hash.substring(7);
+var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
 var aceEditor;
 
 
@@ -39043,7 +39068,7 @@ var Preview = {
     this.bindPreviewEvents(defaultStyle)
     this.selectPreviewStyle(defaultStyle);
     if (previewStyles && previewStyles.length > 1){
-      $("#navbar-menu-list").append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Preview Styles<span class="caret"></span></a><ul id="preview-styles-menu" class="dropdown-menu"></ul>');
+      $("#navbar-menu-list").append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Preview Styles<span class="caret"></span></a><ul id="preview-styles-menu" class="dropdown-menu"></ul></li>');
       for (var i = 0, len = previewStyles.length; i < len; i++) {
         $("#preview-styles-menu").append("<li><a href='#' class='select-preview-style' data-style-name='" + previewStyles[i].name + "' title='" + previewStyles[i].description + "'>" + previewStyles[i].name + "</a></li>");
       }

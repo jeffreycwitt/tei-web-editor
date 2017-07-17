@@ -37,23 +37,23 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
               <ul class="dropdown-menu"> -->
                 <li>
-                  <a href="#" id="file-new">
+                  <a href="#" id="file-new" title="New">
                   <span class="glyphicon glyphicon-file"></span>
-                  New</a>
+                  </a>
                 </li>
                 <li>
-                  <a href="#" class="display-repo-list">
+                  <a href="#" class="display-repo-list" title="open">
                   <span class="glyphicon glyphicon-folder-open"></span>
-                  Open</a>
+                  </a>
                 </li>
                 <li>
-                  <a href="#" id="display-saveAs-repo-list">
+                  <a href="#" id="display-saveAs-repo-list" title="save">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                  Save</a>
+                  </a>
                 </li>
-                <li><a href="#" id="file-pr">
+                <li><a href="#" id="file-pr" title="Review Request">
                   <span class="glyphicon glyphicon-comment"></span>
-                  Review Request</a></li>
+                  </a></li>
                 <li><a href="#" id="toggle-mirador">Toggle Mirador</a></li>
                 <li><a href="#" id="toggle-preview">Toggle Preview</a></li>
                 <li><a href="#" id="toggle-editor">Toggle Editor</a></li>
@@ -128,8 +128,13 @@
       </div>
       <div id="breadcrumbs">
       </div>
-      <a href="#" class="display-repo-list">Back to Repository List</a></li>
-      <div id="repo-browser-list"></div>
+      <table id="repo-browser-list" class="table table-condensed table-hover">
+        <thead>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
     </p>
   </div>
   <div id="save" class="file-window">

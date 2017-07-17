@@ -26,8 +26,8 @@ import Preview from "./Preview.js";
 import User from "./User.js";
 
 
-var access_token = window.location.hash.substring(7);
-
+//var access_token = window.location.hash.substring(7);
+var access_token = "86e962d9ae6c97ad0b08d2d90575803425ded178"
 var aceEditor;
 
 

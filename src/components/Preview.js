@@ -13,7 +13,7 @@ var Preview = {
     this.bindPreviewEvents(defaultStyle)
     this.selectPreviewStyle(defaultStyle);
     if (previewStyles && previewStyles.length > 1){
-      $("#navbar-menu-list").append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Preview Styles<span class="caret"></span></a><ul id="preview-styles-menu" class="dropdown-menu"></ul>');
+      $("#navbar-menu-list").append('<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Preview Styles<span class="caret"></span></a><ul id="preview-styles-menu" class="dropdown-menu"></ul></li>');
       for (var i = 0, len = previewStyles.length; i < len; i++) {
         $("#preview-styles-menu").append("<li><a href='#' class='select-preview-style' data-style-name='" + previewStyles[i].name + "' title='" + previewStyles[i].description + "'>" + previewStyles[i].name + "</a></li>");
       }
