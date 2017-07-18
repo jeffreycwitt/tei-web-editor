@@ -10380,6 +10380,41 @@ var ace = __webpack_require__(17);
 var aceEditor;
 var Util = {
   access_token: access_token,
+  togglePreview: function(){
+    if ($('#preview').is(':visible')){
+      $("#editor").animate({"width": "100%"})
+      $('#preview').slideToggle();
+      if (!$('#editor').is(':visible')){
+        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+        $("#mirador-viewer").animate({"height": "100%"})
+      }
+    }
+    else{
+      $("#editor").animate({"width": "50%"})
+      //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+      $("#mirador-viewer").animate({"height": "40%"})
+      $('#preview').slideToggle();
+    }
+  },
+  toggleEditor: function(){
+    if ($('#editor').is(':visible')){
+      $("#preview").animate({"width": "100%"})
+      $('#editor').slideToggle();
+      if (!$('#preview').is(':visible')){
+        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+        $("#mirador-viewer").animate({"height": "100%"})
+      }
+    }
+    else{
+      $("#preview").animate({"width": "50%"})
+      //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+      $("#mirador-viewer").animate({"height": "40%"})
+      $('#editor').slideToggle();
+    }
+  },
+  toggleMirador: function(){
+    $('#mirador-viewer').slideToggle();
+  },
   undarken: function(){
     $('#editor').removeClass("darkened");
     $('#preview').removeClass("darkened");
@@ -31248,17 +31283,17 @@ var Open = {
       var tree = data.tree
 
       var repoUrl = "https://api.github.com/repos/" + repo;
-      $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
+      $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="display-open-repo-branch-list" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
 
       for (var i = 0, len = tree.length; i < len; i++) {
         if (tree[i].type === 'blob' && tree[i].path.includes('.xml')){
-          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-file-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="open-file-from-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
         else if (tree[i].type === 'blob' && !tree[i].path.includes('.xml')){
           $("#repo-browser-list > tbody").append('<tr><td class="disabled">' + tree[i].path +'</td></tr>');
         }
         else if (tree[i].type === 'tree'){
-          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="display-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
       }
     });
@@ -31301,7 +31336,7 @@ var Open = {
 
       $("#repo-browser-list > thead").append('<tr><th>Branch</th><th>Create New Branch</th></tr>');
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a></td><td><form id="create-new-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></td></tr>');
+        $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="display-open-top-level-tree" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a></td><td><form id="create-new-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></td></tr>');
       }
     });
   },
@@ -31320,17 +31355,16 @@ var Open = {
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
-
       if (__WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files.length === 0) {
         $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
       else {
         for (var i = 0, len = __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files.length; i < len; i++) {
-          $("#recentfiles > tbody").append('<tr><td><a href="#" class="file-open-file" data-url="'+ __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] + '">' + __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] +'</a></td></tr>');
+          $("#recentfiles > tbody").append('<tr><td><a href="#" class="open-file-from-recent" data-url="'+ __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] + '">' + __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files[i] +'</a></td></tr>');
         }
       }
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repositories > tbody").append('<tr><td><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
+        $("#repositories > tbody").append('<tr><td><a href="#" class="display-open-repo-branch-list" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
       }
       if (_this.recommendedRepos.length > 0){
         for (var i = 0, len = _this.recommendedRepos.length; i < len; i++) {
@@ -31341,6 +31375,11 @@ var Open = {
     });
   },
   createFork: function(url){
+    //this conditionally allows a user to just past the normal html address of the reop to be forked.
+    if (url.includes("https://github.com/")){
+      var repo = url.split("https://github.com/")[1];
+      var url = "https://api.github.com/repos/" + repo;
+    }
       var url = url + "/forks";
       var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token
       var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
@@ -31667,7 +31706,7 @@ var Main = {
     });
 
     // open pr review dialogue box
-    $(document).on("click", "#file-pr", function(){
+    $(document).on("click", "#display-pr", function(){
       __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].darken();
       $('.file-window').removeClass("visible")
       $('#pull-request-viewer').addClass("visible")
@@ -31676,42 +31715,17 @@ var Main = {
 
     // Toggle Mirador Window
     $(document).on("click", "#toggle-mirador", function(){
-      $('#mirador-viewer').slideToggle();
+      __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].toggleMirador();
     });
 
     // Toggle Preview Window
     $(document).on("click", "#toggle-preview", function(){
-      if ($('#preview').is(':visible')){
-        $("#editor").animate({"width": "100%"})
-        $('#preview').slideToggle();
-        if (!$('#editor').is(':visible')){
-          //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-          $("#mirador-viewer").animate({"height": "100%"})
-        }
-      }
-      else{
-        $("#editor").animate({"width": "50%"})
-        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "40%"})
-        $('#preview').slideToggle();
-      }
+      __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].togglePreview();
+
     });
     // Toggle Editor Window
     $(document).on("click", "#toggle-editor", function(){
-      if ($('#editor').is(':visible')){
-        $("#preview").animate({"width": "100%"})
-        $('#editor').slideToggle();
-        if (!$('#preview').is(':visible')){
-          //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-          $("#mirador-viewer").animate({"height": "100%"})
-        }
-      }
-      else{
-        $("#preview").animate({"width": "50%"})
-        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "40%"})
-        $('#editor').slideToggle();
-      }
+      __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].toggleEditor();
     });
 
   //======================================================== //
@@ -31721,20 +31735,40 @@ var Main = {
   //======================================================== //
 
     //open respository from branch and display top level tree contents
-    $(document).on("click", ".file-open-branch", function(){
+    $(document).on("click", ".display-open-top-level-tree", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = url.split("https://api.github.com/repos/")[1];
-      //retrieveDirectoryCommits(url, access_token)
       __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, access_token, branch, branchSha, "", repo);
-    // select repo and liste available branches
+
     });
-    $(document).on("click", ".file-open-repo", function(){
+
+    //open directory tree in repo and get its contents contents (very similar to display-open-top-level-tree)
+    $(document).on("click",".display-open-tree", function(){
+      var url = $(this).attr("data-url");
+      var path = $(this).attr("data-path");
+      var branch = $(this).attr("data-branch");
+      var branchSha = $(this).attr("data-branch-sha");
+      var repo = $(this).attr("data-repo");
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, access_token, branch, branchSha, path, repo);
+    });
+
+    // select repo and list available branches
+    $(document).on("click", ".display-open-repo-branch-list", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenRepoBranchList(url, access_token);
 
+    });
+
+    // create new branch within open dilaogue box //
+    $(document).on("submit", "#create-new-branch", function(e){
+      e.preventDefault();
+      var branchName = $(e.target).find("#branch").val();
+      var repo = $(e.target).find("#repo").val();
+      var branchSourceSha = $(e.target).find("#branch-source-sha").val();
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
     });
 
     //==BEGIN CREATE FORK EVENTS ====//
@@ -31745,43 +31779,25 @@ var Main = {
     $("#fork-manual").submit(function(e){
       e.preventDefault();
       var url = $(this).find("#fork-url").val();
-      console.log(url);
       __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].createFork(url);
     });
     //== END CREATE FORK EVENTS ====//
 
-    //display contents of a git tree
-    $(document).on("click",".file-open-tree", function(){
-      var url = $(this).attr("data-url");
-      var path = $(this).attr("data-path");
-      var branch = $(this).attr("data-branch");
-      var branchSha = $(this).attr("data-branch-sha");
-      var repo = $(this).attr("data-repo");
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, access_token, branch, branchSha, path, repo);
-    });
-    $(document).on("submit", "#create-new-branch", function(e){
-      e.preventDefault();
-      var branchName = $(e.target).find("#branch").val();
-      var repo = $(e.target).find("#repo").val();
-      var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
-    });
-
     //=== BEGIN OPEN FILE EVENTS ===//
 
     // open file from manual input url
-    $("#file-manual").submit(function(e){
+    $("#open-file-manually").submit(function(e){
       e.preventDefault();
       var url = $(this).find("#manual-url").val();
       __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].openFile(url)
     });
       //open file from recent files list
-    $(document).on("click",".file-open-file", function(){
+    $(document).on("click",".open-file-from-recent", function(){
       var url = $(this).attr("data-url");
       __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].openFile(url)
     });
       //open file from directory list
-    $(document).on("click",".file-open-file-list", function(){
+    $(document).on("click",".open-file-from-list", function(){
       var path = $(this).attr("data-path");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch");
@@ -37999,6 +38015,18 @@ var KeyBoardShortCuts = {
     });
     Mousetrap.bind('command t n', function(){
       __WEBPACK_IMPORTED_MODULE_2__Util_js__["a" /* default */].fileNew();
+      return false;
+    });
+    Mousetrap.bind('command t m', function(){
+      __WEBPACK_IMPORTED_MODULE_2__Util_js__["a" /* default */].toggleMirador();
+      return false;
+    });
+    Mousetrap.bind('command t p', function(){
+      __WEBPACK_IMPORTED_MODULE_2__Util_js__["a" /* default */].togglePreview();
+      return false;
+    });
+    Mousetrap.bind('command t e', function(){
+      __WEBPACK_IMPORTED_MODULE_2__Util_js__["a" /* default */].toggleEditor();
       return false;
     });
 

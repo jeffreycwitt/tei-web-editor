@@ -31,17 +31,17 @@ var Open = {
       var tree = data.tree
 
       var repoUrl = "https://api.github.com/repos/" + repo;
-      $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
+      $("#repo-browser-branch").html('<p><a href="#" class="display-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="display-open-repo-branch-list" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
 
       for (var i = 0, len = tree.length; i < len; i++) {
         if (tree[i].type === 'blob' && tree[i].path.includes('.xml')){
-          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-file-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="open-file-from-list" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
         else if (tree[i].type === 'blob' && !tree[i].path.includes('.xml')){
           $("#repo-browser-list > tbody").append('<tr><td class="disabled">' + tree[i].path +'</td></tr>');
         }
         else if (tree[i].type === 'tree'){
-          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
+          $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="display-open-tree" data-repo="' + repo + '" data-branch="' + branch + '" data-branch-sha="' + branchSha + '" data-url="'+ tree[i].url + '" data-path="' + path + "/" + tree[i].path + '">' + tree[i].path +'</a></td></tr>');
         }
       }
     });
@@ -84,7 +84,7 @@ var Open = {
 
       $("#repo-browser-list > thead").append('<tr><th>Branch</th><th>Create New Branch</th></tr>');
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="file-open-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a></td><td><form id="create-new-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></td></tr>');
+        $("#repo-browser-list > tbody").append('<tr><td><a href="#" class="display-open-top-level-tree" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '">' + data[i].name +'</a></td><td><form id="create-new-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></td></tr>');
       }
     });
   },
@@ -103,17 +103,16 @@ var Open = {
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
     Util.retrieveAPIData(url, access_token).done(function(data){
-
       if (Recent.files.length === 0) {
         $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
       else {
         for (var i = 0, len = Recent.files.length; i < len; i++) {
-          $("#recentfiles > tbody").append('<tr><td><a href="#" class="file-open-file" data-url="'+ Recent.files[i] + '">' + Recent.files[i] +'</a></td></tr>');
+          $("#recentfiles > tbody").append('<tr><td><a href="#" class="open-file-from-recent" data-url="'+ Recent.files[i] + '">' + Recent.files[i] +'</a></td></tr>');
         }
       }
       for (var i = 0, len = data.length; i < len; i++) {
-        $("#repositories > tbody").append('<tr><td><a href="#" class="file-open-repo" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
+        $("#repositories > tbody").append('<tr><td><a href="#" class="display-open-repo-branch-list" data-url="'+ data[i].url + '">' + data[i].url +'</a></td></tr>');
       }
       if (_this.recommendedRepos.length > 0){
         for (var i = 0, len = _this.recommendedRepos.length; i < len; i++) {
@@ -124,6 +123,11 @@ var Open = {
     });
   },
   createFork: function(url){
+    //this conditionally allows a user to just past the normal html address of the reop to be forked.
+    if (url.includes("https://github.com/")){
+      var repo = url.split("https://github.com/")[1];
+      var url = "https://api.github.com/repos/" + repo;
+    }
       var url = url + "/forks";
       var access_token = Util.access_token
       var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;

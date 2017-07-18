@@ -73,7 +73,7 @@ var Main = {
     });
 
     // open pr review dialogue box
-    $(document).on("click", "#file-pr", function(){
+    $(document).on("click", "#display-pr", function(){
       Util.darken();
       $('.file-window').removeClass("visible")
       $('#pull-request-viewer').addClass("visible")
@@ -82,42 +82,17 @@ var Main = {
 
     // Toggle Mirador Window
     $(document).on("click", "#toggle-mirador", function(){
-      $('#mirador-viewer').slideToggle();
+      Util.toggleMirador();
     });
 
     // Toggle Preview Window
     $(document).on("click", "#toggle-preview", function(){
-      if ($('#preview').is(':visible')){
-        $("#editor").animate({"width": "100%"})
-        $('#preview').slideToggle();
-        if (!$('#editor').is(':visible')){
-          //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-          $("#mirador-viewer").animate({"height": "100%"})
-        }
-      }
-      else{
-        $("#editor").animate({"width": "50%"})
-        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "40%"})
-        $('#preview').slideToggle();
-      }
+      Util.togglePreview();
+
     });
     // Toggle Editor Window
     $(document).on("click", "#toggle-editor", function(){
-      if ($('#editor').is(':visible')){
-        $("#preview").animate({"width": "100%"})
-        $('#editor').slideToggle();
-        if (!$('#preview').is(':visible')){
-          //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-          $("#mirador-viewer").animate({"height": "100%"})
-        }
-      }
-      else{
-        $("#preview").animate({"width": "50%"})
-        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "40%"})
-        $('#editor').slideToggle();
-      }
+      Util.toggleEditor();
     });
 
   //======================================================== //
@@ -127,20 +102,40 @@ var Main = {
   //======================================================== //
 
     //open respository from branch and display top level tree contents
-    $(document).on("click", ".file-open-branch", function(){
+    $(document).on("click", ".display-open-top-level-tree", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = url.split("https://api.github.com/repos/")[1];
-      //retrieveDirectoryCommits(url, access_token)
       Open.displayOpenTree(url, access_token, branch, branchSha, "", repo);
-    // select repo and liste available branches
+
     });
-    $(document).on("click", ".file-open-repo", function(){
+
+    //open directory tree in repo and get its contents contents (very similar to display-open-top-level-tree)
+    $(document).on("click",".display-open-tree", function(){
+      var url = $(this).attr("data-url");
+      var path = $(this).attr("data-path");
+      var branch = $(this).attr("data-branch");
+      var branchSha = $(this).attr("data-branch-sha");
+      var repo = $(this).attr("data-repo");
+      Open.displayOpenTree(url, access_token, branch, branchSha, path, repo);
+    });
+
+    // select repo and list available branches
+    $(document).on("click", ".display-open-repo-branch-list", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       Open.displayOpenRepoBranchList(url, access_token);
 
+    });
+
+    // create new branch within open dilaogue box //
+    $(document).on("submit", "#create-new-branch", function(e){
+      e.preventDefault();
+      var branchName = $(e.target).find("#branch").val();
+      var repo = $(e.target).find("#repo").val();
+      var branchSourceSha = $(e.target).find("#branch-source-sha").val();
+      Open.createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
     });
 
     //==BEGIN CREATE FORK EVENTS ====//
@@ -151,43 +146,25 @@ var Main = {
     $("#fork-manual").submit(function(e){
       e.preventDefault();
       var url = $(this).find("#fork-url").val();
-      console.log(url);
       Open.createFork(url);
     });
     //== END CREATE FORK EVENTS ====//
 
-    //display contents of a git tree
-    $(document).on("click",".file-open-tree", function(){
-      var url = $(this).attr("data-url");
-      var path = $(this).attr("data-path");
-      var branch = $(this).attr("data-branch");
-      var branchSha = $(this).attr("data-branch-sha");
-      var repo = $(this).attr("data-repo");
-      Open.displayOpenTree(url, access_token, branch, branchSha, path, repo);
-    });
-    $(document).on("submit", "#create-new-branch", function(e){
-      e.preventDefault();
-      var branchName = $(e.target).find("#branch").val();
-      var repo = $(e.target).find("#repo").val();
-      var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      Open.createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
-    });
-
     //=== BEGIN OPEN FILE EVENTS ===//
 
     // open file from manual input url
-    $("#file-manual").submit(function(e){
+    $("#open-file-manually").submit(function(e){
       e.preventDefault();
       var url = $(this).find("#manual-url").val();
       Open.openFile(url)
     });
       //open file from recent files list
-    $(document).on("click",".file-open-file", function(){
+    $(document).on("click",".open-file-from-recent", function(){
       var url = $(this).attr("data-url");
       Open.openFile(url)
     });
       //open file from directory list
-    $(document).on("click",".file-open-file-list", function(){
+    $(document).on("click",".open-file-from-list", function(){
       var path = $(this).attr("data-path");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch");

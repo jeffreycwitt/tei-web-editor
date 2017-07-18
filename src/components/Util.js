@@ -13,6 +13,41 @@ var ace = require('brace');
 var aceEditor;
 var Util = {
   access_token: access_token,
+  togglePreview: function(){
+    if ($('#preview').is(':visible')){
+      $("#editor").animate({"width": "100%"})
+      $('#preview').slideToggle();
+      if (!$('#editor').is(':visible')){
+        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+        $("#mirador-viewer").animate({"height": "100%"})
+      }
+    }
+    else{
+      $("#editor").animate({"width": "50%"})
+      //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+      $("#mirador-viewer").animate({"height": "40%"})
+      $('#preview').slideToggle();
+    }
+  },
+  toggleEditor: function(){
+    if ($('#editor').is(':visible')){
+      $("#preview").animate({"width": "100%"})
+      $('#editor').slideToggle();
+      if (!$('#preview').is(':visible')){
+        //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+        $("#mirador-viewer").animate({"height": "100%"})
+      }
+    }
+    else{
+      $("#preview").animate({"width": "50%"})
+      //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
+      $("#mirador-viewer").animate({"height": "40%"})
+      $('#editor').slideToggle();
+    }
+  },
+  toggleMirador: function(){
+    $('#mirador-viewer').slideToggle();
+  },
   undarken: function(){
     $('#editor').removeClass("darkened");
     $('#preview').removeClass("darkened");

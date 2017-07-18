@@ -27,6 +27,18 @@ var KeyBoardShortCuts = {
       Util.fileNew();
       return false;
     });
+    Mousetrap.bind('command t m', function(){
+      Util.toggleMirador();
+      return false;
+    });
+    Mousetrap.bind('command t p', function(){
+      Util.togglePreview();
+      return false;
+    });
+    Mousetrap.bind('command t e', function(){
+      Util.toggleEditor();
+      return false;
+    });
 
   }
 }

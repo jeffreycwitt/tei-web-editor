@@ -37,26 +37,32 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
               <ul class="dropdown-menu"> -->
                 <li>
-                  <a href="#" id="file-new" title="New">
+                  <a href="#" id="file-new" title="New (command t n)">
                   <span class="glyphicon glyphicon-file"></span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="display-repo-list" title="open">
+                  <a href="#" class="display-repo-list" title="open (command t o)">
                   <span class="glyphicon glyphicon-folder-open"></span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="display-saveAs-repo-list" title="save">
+                  <a href="#" class="display-saveAs-repo-list" title="save (command t s)">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   </a>
                 </li>
-                <li><a href="#" id="file-pr" title="Review Request">
+                <li><a href="#" id="display-pr" title="Review Request">
                   <span class="glyphicon glyphicon-comment"></span>
-                  </a></li>
-                <li><a href="#" id="toggle-mirador">Toggle Mirador</a></li>
-                <li><a href="#" id="toggle-preview">Toggle Preview</a></li>
-                <li><a href="#" id="toggle-editor">Toggle Editor</a></li>
+                  </a>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Views<span class="caret"></span></a>
+                  <ul id="views-menu" class="dropdown-menu">
+                    <li><a href="#" id="toggle-mirador">Toggle Mirador (command t m)</a></li>
+                    <li><a href="#" id="toggle-preview">Toggle Preview (command t p)</a></li>
+                    <li><a href="#" id="toggle-editor">Toggle Editor (command t e)</a></li>
+                  </ul>
+              </li>
               <!-- </ul>
             </li> -->
 
@@ -84,7 +90,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
     <div>
-      <form id="file-manual">
+      <form id="open-file-manually">
         <div class="form-group">
           <label for="manual-url"><h3>Add by URL</h3></label>
           <input type="text" class="form-control" id="manual-url" name="manual-url" placeholder="https://api.github.com/repos/scta-texts/summahalensis/contents/ahsh-l1p1i1t1q1c1/ahsh-l1p1i1t1q1c1.xml?ref=sandbox">
