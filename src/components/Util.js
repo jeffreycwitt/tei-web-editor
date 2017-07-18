@@ -19,14 +19,18 @@ var Util = {
       $('#preview').slideToggle();
       if (!$('#editor').is(':visible')){
         //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "100%"})
+        $("#mirador-viewer").animate({"height": "100%"}, function(){
+          window.dispatchEvent(new Event('resize'));
+        });
       }
     }
     else{
       $("#editor").animate({"width": "50%"})
       //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
       $("#mirador-viewer").animate({"height": "40%"})
-      $('#preview').slideToggle();
+      $('#preview').slideToggle("slow", function(){
+          window.dispatchEvent(new Event('resize'));
+      });
     }
   },
   toggleEditor: function(){
@@ -35,18 +39,26 @@ var Util = {
       $('#editor').slideToggle();
       if (!$('#preview').is(':visible')){
         //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
-        $("#mirador-viewer").animate({"height": "100%"})
+        $("#mirador-viewer").animate({"height": "100%"}, function(){
+          window.dispatchEvent(new Event('resize'));
+        });
       }
     }
     else{
       $("#preview").animate({"width": "50%"})
       //mirador toggle is buggy because the styling doesn't adjust until the window is adjusted
       $("#mirador-viewer").animate({"height": "40%"})
-      $('#editor').slideToggle();
+      $('#editor').slideToggle("slow", function(){
+        window.dispatchEvent(new Event('resize'));
+      });
+
     }
   },
   toggleMirador: function(){
-    $('#mirador-viewer').slideToggle();
+    $('#mirador-viewer').slideToggle("slow", function(){
+      window.dispatchEvent(new Event('resize'));
+    });
+
   },
   undarken: function(){
     $('#editor').removeClass("darkened");
