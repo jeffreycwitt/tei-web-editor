@@ -9,7 +9,7 @@ var mir = Mirador({
           //'openManifestsPage' : false,
           "buildPath": "mirador-2.4/",
           "data" : [
-              {"manifestUri": "http://scta.info/iiif/plaoulcommentary/sorb/manifest"}
+              {"manifestUri": "https://scta.info/iiif/plaoulcommentary/sorb/manifest"}
           ],
           // "windowObjects":[{
           //   //loadedManifest: "http://scta.info/iiif/summahalensis/quaracchi1924/manifest",
