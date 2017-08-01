@@ -26,3 +26,7 @@ Make sure this file stays outside of your git history!
 
 * Jeffrey C. Witt (Loyola University Maryland)
 * Rashmi Singhal (Harvard University)
+
+## License
+
+[GNU GENERAL PUBLIC LICENSE](license.txt)
