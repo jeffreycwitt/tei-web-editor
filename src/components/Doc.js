@@ -5,7 +5,6 @@ var Doc = {
   state: null,
   modified: true,
   set: function(data){
-    console.log(data);
     this.state = data;
     this.displayCurrentDoc(data);
   },
@@ -14,7 +13,6 @@ var Doc = {
     if (data){
       var url = data.url
       var branch = url.split("?ref=")[1]
-      console.log(branch);
       var repo = url.split("https://api.github.com/repos/")[1].split("/contents/")[0];
       if (branch === "gh-pages"){
         $("#navbar-menu-list").append('<li id="document-info" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Current doc: ' + data.name + '<span class="caret"></span></a><ul id="document-info-list" class="dropdown-menu"></ul></li>');

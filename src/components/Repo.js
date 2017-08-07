@@ -5,9 +5,9 @@ var Repo = {
   set: function(data){
     this.state = data
   },
-  retrieveAndSetRepoState: function(url, access_token){
+  retrieveAndSetRepoState: function(url){
     var _this = this;
-    Util.retrieveAPIData(url, access_token).done(function(data){
+    Util.retrieveAPIData(url).done(function(data){
       _this.set(data);
     });
   }

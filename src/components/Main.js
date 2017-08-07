@@ -33,6 +33,7 @@ var aceEditor;
 var Main = {
   init: function(customSettings){
     console.log(access_token)
+    Util.setAccessToken(access_token);
     aceEditor = ace.edit("editor");
     aceEditor.setTheme("ace/theme/kuroir");
     aceEditor.session.setMode("ace/mode/xml");
@@ -107,7 +108,7 @@ var Main = {
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = url.split("https://api.github.com/repos/")[1];
-      Open.displayOpenTree(url, access_token, branch, branchSha, "", repo);
+      Open.displayOpenTree(url, branch, branchSha, "", repo);
 
     });
 
@@ -118,14 +119,14 @@ var Main = {
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = $(this).attr("data-repo");
-      Open.displayOpenTree(url, access_token, branch, branchSha, path, repo);
+      Open.displayOpenTree(url, branch, branchSha, path, repo);
     });
 
     // select repo and list available branches
     $(document).on("click", ".display-open-repo-branch-list", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
-      Open.displayOpenRepoBranchList(url, access_token);
+      Open.displayOpenRepoBranchList(url);
 
     });
 
@@ -135,7 +136,7 @@ var Main = {
       var branchName = $(e.target).find("#branch").val();
       var repo = $(e.target).find("#repo").val();
       var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      Open.createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
+      Open.createNewOpenBranch(repo, branchName, branchSourceSha);
     });
 
     //==BEGIN CREATE FORK EVENTS ====//
@@ -186,8 +187,7 @@ var Main = {
       var branchName = $(e.target).find("#branch").val();
       var repo = $(e.target).find("#repo").val();
       var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      //displaySaveAsTree(url, branch, branchSha, access_token);
-      SaveAs.createNewSaveAsBranch(repo, branchName, branchSourceSha, access_token);
+      SaveAs.createNewSaveAsBranch(repo, branchName, branchSourceSha);
     });
     $(document).on("submit", "#create-new-repo", function(e){
       e.preventDefault();
@@ -203,7 +203,7 @@ var Main = {
       $("#repo").val(repo);
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
-      SaveAs.displaySaveAsRepoBranchList(url, access_token);
+      SaveAs.displaySaveAsRepoBranchList(url);
     });
     //opens top level tree in saveAs window for a given repo branch
     $(document).on("click", ".file-open-save-as-branch", function(){
@@ -217,9 +217,7 @@ var Main = {
       //var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
       $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
-      //retrieveDirectoryCommits(url, access_token)
-      //retrieveRepoTree(url, access_token, branch, branchSha);
-      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
+      SaveAs.displaySaveAsTree(url, branch, branchSha, repo, path);
     });
     $(document).on("click", ".file-open-save-as-path", function(){
       var url = $(this).attr("data-url");
@@ -230,9 +228,7 @@ var Main = {
       var path_segment = path.length > 0 ? path + "/" : "";
       $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
-      //retrieveDirectoryCommits(url, access_token)
-      //retrieveRepoTree(url, access_token, branch, branchSha);
-      SaveAs.displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
+      SaveAs.displaySaveAsTree(url, branch, branchSha, repo, path);
     });
 
     // BEGIN events keep saveAs form input values in sync with directory browsing
@@ -271,7 +267,7 @@ var Main = {
         "sha": sha,
         "branch": branch
       }
-      SaveAs.saveFile(url, commit_data, access_token);
+      SaveAs.saveFile(url, commit_data);
       });
 
   //======================================================== //

@@ -6,9 +6,8 @@ import Recent from "./Recent.js";
 
 var Open = {
   recommendedRepos: {},
-  displayOpenTree: function(repo_base, access_token, branch, branchSha, path, repo){
-  //function displayTree(tree, path, branch, branchSha, repo, parent_tree_url){
-  //function retrieveRepoTree(repo_base, access_token, branch, branchSha){
+  displayOpenTree: function(repo_base, branch, branchSha, path, repo){
+
     $("#repo-browser-list > tbody").empty();
     $("#repo-browser-list > h3").remove();
     $("#repo-browser-list > thead").empty();
@@ -26,7 +25,7 @@ var Open = {
       var url = repo_base + "/git/trees/" + branch;
     }
 
-    Util.retrieveAPIData(url, access_token).done(function(data){
+    Util.retrieveAPIData(url).done(function(data){
 
       var tree = data.tree
 
@@ -46,12 +45,13 @@ var Open = {
       }
     });
   },
-  createNewOpenBranch: function(repo, branchName, branchSourceSha, access_token){
+  createNewOpenBranch: function(repo, branchName, branchSourceSha){
     var _this = this;
     var new_branch_data = {
         "ref": "refs/heads/" + branchName,
         "sha": branchSourceSha
       }
+      var access_token = Util.access_token;
       var url = "https://api.github.com/repos/" + repo + "/" + "git/refs"
       var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
       $.ajax({
@@ -63,7 +63,7 @@ var Open = {
 
         success: function(data, status, res) {
           var repo_base = "https://api.github.com/repos/" + repo;
-          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, "", repo)
+          _this.displayOpenTree(repo_base, branchName, branchSourceSha, "", repo)
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -71,9 +71,9 @@ var Open = {
       });
 
   },
-  displayOpenRepoBranchList: function(repo_base, access_token){
+  displayOpenRepoBranchList: function(repo_base){
     var url = repo_base + "/branches";
-    Util.retrieveAPIData(url, access_token).done(function(data){
+    Util.retrieveAPIData(url).done(function(data){
 
       var repo = repo_base.split("https://api.github.com/repos/")[1];
       //TODO Needs to refactor in to one "clear" function; this is repeated below in the display tree function
@@ -99,10 +99,9 @@ var Open = {
     $("#repositories > tbody").empty();
     $("#suggested-repositories > tbody").empty();
 
-    var access_token = Util.access_token
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
-    Util.retrieveAPIData(url, access_token).done(function(data){
+    Util.retrieveAPIData(url).done(function(data){
       if (Recent.files.length === 0) {
         $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
@@ -137,9 +136,7 @@ var Open = {
         success: function(data, status, res) {
 
           var forkedRepoBase = res.responseJSON.url;
-          Open.displayOpenRepoBranchList(forkedRepoBase, access_token);
-          //getRepoBranches(forkedRepoBase, access_token);
-
+          Open.displayOpenRepoBranchList(forkedRepoBase);
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -151,7 +148,7 @@ var Open = {
     $('.file-window').removeClass("visible");
     Util.undarken();
     Recent.set(url);
-    Util.loadText(url, Util.access_token)
+    Util.loadText(url)
   }
 }
 
