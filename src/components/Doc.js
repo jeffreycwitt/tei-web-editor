@@ -1,12 +1,18 @@
 global.jQuery = require('jQuery');
 var $ = global.jQuery;
 
+import Util from "./Util.js";
+
 var Doc = {
   state: null,
   modified: true,
   set: function(data){
     this.state = data;
     this.displayCurrentDoc(data);
+  },
+  setModified: function(value){
+    this.modified = value;
+    Util.browserNavCheck(value);
   },
   displayCurrentDoc(data){
     $("#document-info").remove();

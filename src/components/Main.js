@@ -294,7 +294,9 @@ var Main = {
       var newText = Renderer.tei_conversion(aceEditor.getValue(), function(data){
       });
       //change Doc state to modified
-      Doc.modified = true;
+      Doc.setModified(true);
+      // Doc.modified = true;
+      // Util.browserNavCheck(true);
       $("#preview").html(newText);
     });
 
@@ -310,6 +312,7 @@ var Main = {
       var styleName = $(this).attr("data-style-name");
       Preview.selectPreviewStyle(styleName);
     });
+
   //======================================================== //
   // END MISCELLANEOUS EVENTS
   //end of event handling functions

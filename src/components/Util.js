@@ -15,7 +15,6 @@ var Util = {
   setAccessToken: function(access_token){
     this.access_token = access_token;
   },
-
   togglePreview: function(){
     if ($('#preview').is(':visible')){
       $("#editor").animate({"width": "100%"})
@@ -115,7 +114,9 @@ var Util = {
     $('#message').val("");
 
     Doc.set(data);
-    Doc.modified = false;
+    Doc.setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     Repo.retrieveAndSetRepoState("https://api.github.com/repos/" + repo)
   },
   clearSaveParameters: function(){
@@ -128,11 +129,13 @@ var Util = {
     $('#message').val("");
 
     Doc.set(null);
-    Doc.modified = false;
+    Doc.setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     Repo.set(null);
   },
   //this function checks if there have been any changes to the current file since the last save
-  // other functions should use to prompt user from navigating away from unsaved content.
+  //the Doc.setModified() function will call this evertime the modified state gets set.
   confirm: function(){
     var confirmed;
     console.log("Doc.modifed in confirm function", Doc.modified);
@@ -148,6 +151,16 @@ var Util = {
       confirmed = true;
     }
     return confirmed;
+  },
+  // this function sets browser behavior for when there are saved and unsaved changes
+  // it needs to be recalled whenever
+  browserNavCheck(changes){
+    console.log("test", changes);
+    window.onbeforeunload = function() {
+      if (changes)
+      return Util.confirm();
+    }
+
   },
   loadText: function(url){
     if (Util.confirm()){

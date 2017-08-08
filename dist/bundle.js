@@ -10382,7 +10382,6 @@ var Util = {
   setAccessToken: function(access_token){
     this.access_token = access_token;
   },
-
   togglePreview: function(){
     if ($('#preview').is(':visible')){
       $("#editor").animate({"width": "100%"})
@@ -10482,7 +10481,9 @@ var Util = {
     $('#message').val("");
 
     __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].set(data);
-    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified = false;
+    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     __WEBPACK_IMPORTED_MODULE_3__Repo_js__["a" /* default */].retrieveAndSetRepoState("https://api.github.com/repos/" + repo)
   },
   clearSaveParameters: function(){
@@ -10495,11 +10496,13 @@ var Util = {
     $('#message').val("");
 
     __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].set(null);
-    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified = false;
+    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     __WEBPACK_IMPORTED_MODULE_3__Repo_js__["a" /* default */].set(null);
   },
   //this function checks if there have been any changes to the current file since the last save
-  // other functions should use to prompt user from navigating away from unsaved content.
+  //the Doc.setModified() function will call this evertime the modified state gets set.
   confirm: function(){
     var confirmed;
     console.log("Doc.modifed in confirm function", __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified);
@@ -10515,6 +10518,16 @@ var Util = {
       confirmed = true;
     }
     return confirmed;
+  },
+  // this function sets browser behavior for when there are saved and unsaved changes
+  // it needs to be recalled whenever
+  browserNavCheck(changes){
+    console.log("test", changes);
+    window.onbeforeunload = function() {
+      if (changes)
+      return Util.confirm();
+    }
+
   },
   loadText: function(url){
     if (Util.confirm()){
@@ -10717,8 +10730,11 @@ var Recent = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {global.jQuery = __webpack_require__(2);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Util_js__ = __webpack_require__(3);
+global.jQuery = __webpack_require__(2);
 var $ = global.jQuery;
+
+
 
 var Doc = {
   state: null,
@@ -10726,6 +10742,10 @@ var Doc = {
   set: function(data){
     this.state = data;
     this.displayCurrentDoc(data);
+  },
+  setModified: function(value){
+    this.modified = value;
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].browserNavCheck(value);
   },
   displayCurrentDoc(data){
     $("#document-info").remove();
@@ -31939,7 +31959,9 @@ var Main = {
       var newText = __WEBPACK_IMPORTED_MODULE_1__Renderer_js__["a" /* default */].tei_conversion(aceEditor.getValue(), function(data){
       });
       //change Doc state to modified
-      __WEBPACK_IMPORTED_MODULE_2__Doc_js__["a" /* default */].modified = true;
+      __WEBPACK_IMPORTED_MODULE_2__Doc_js__["a" /* default */].setModified(true);
+      // Doc.modified = true;
+      // Util.browserNavCheck(true);
       $("#preview").html(newText);
     });
 
@@ -31955,6 +31977,7 @@ var Main = {
       var styleName = $(this).attr("data-style-name");
       __WEBPACK_IMPORTED_MODULE_10__Preview_js__["a" /* default */].selectPreviewStyle(styleName);
     });
+
   //======================================================== //
   // END MISCELLANEOUS EVENTS
   //end of event handling functions
