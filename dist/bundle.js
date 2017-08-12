@@ -31691,7 +31691,7 @@ __webpack_require__(19);
 
 
 
-var access_token = window.location.hash.substring(7);
+const access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 var aceEditor;
 
 

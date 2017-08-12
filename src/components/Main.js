@@ -26,7 +26,7 @@ import Preview from "./Preview.js";
 import User from "./User.js";
 
 
-var access_token = window.location.hash.substring(7);
+const access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 var aceEditor;
 
 

@@ -85,7 +85,8 @@ app.get("/return", function(req, res, callback){
 			else {
 				token[req.query.state] = body.access_token;
 				//res.redirect(redirect[req.query.state] + '#token=' + req.query.state);
-				res.redirect(redirect[req.query.state] + '#token=' + body.access_token);
+        res.cookie('access_token', body.access_token);
+				res.redirect(redirect[req.query.state]);
 				delete redirect[req.query.state];
 			}
 	    });
