@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === 'production'){
   var github = {
     "redirect": "https://tei-web-editor.herokuapp.com",
   	"url": "https://tei-web-editor.herokuapp.com",
-  	"scope": "repo user",
+  	"scope": "repo",
   	"client": process.env.CLIENT_ID,
   	"secret": process.env.CLIENT_SECRET
   }
