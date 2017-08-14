@@ -7,12 +7,14 @@ import Doc from "./Doc.js";
 import Recent from "./Recent.js";
 import Repo from "./Repo.js";
 
-var access_token = window.location.hash.substring(7);
 var ace = require('brace');
-
 var aceEditor;
+
 var Util = {
-  access_token: access_token,
+  access_token: "",
+  setAccessToken: function(access_token){
+    this.access_token = access_token;
+  },
   togglePreview: function(){
     if ($('#preview').is(':visible')){
       $("#editor").animate({"width": "100%"})
@@ -78,7 +80,7 @@ var Util = {
     $('.file-window').removeClass("visible")
     this.loadTemplateText();
   },
-  retrieveAPIData: function(url, access_token){
+  retrieveAPIData: function(url){
     // this should render obsolute the need for access token as a parameter.
     var access_token = this.access_token
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
@@ -112,8 +114,10 @@ var Util = {
     $('#message').val("");
 
     Doc.set(data);
-    Doc.modified = !Doc.modified;
-    Repo.retrieveAndSetRepoState("https://api.github.com/repos/" + repo, Util.access_token)
+    Doc.setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
+    Repo.retrieveAndSetRepoState("https://api.github.com/repos/" + repo)
   },
   clearSaveParameters: function(){
     $("#sha").val("");
@@ -125,14 +129,16 @@ var Util = {
     $('#message').val("");
 
     Doc.set(null);
-    Doc.modified = false;
+    Doc.setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     Repo.set(null);
   },
   //this function checks if there have been any changes to the current file since the last save
-  // other functions should use to prompt user from navigating away from unsaved content.
+  //the Doc.setModified() function will call this evertime the modified state gets set.
   confirm: function(){
     var confirmed;
-    console.log("Doc.modiifed in confirm function", Doc.modified);
+    console.log("Doc.modifed in confirm function", Doc.modified);
     if (Doc.modified){
       if (confirm("This current document as been modified since it last save. Do you want to proceed? Unsaved changes will be lost.")){
         confirmed = true;
@@ -146,10 +152,20 @@ var Util = {
     }
     return confirmed;
   },
-  loadText: function(url, access_token){
+  // this function sets browser behavior for when there are saved and unsaved changes
+  // it needs to be recalled whenever
+  browserNavCheck(changes){
+    console.log("test", changes);
+    window.onbeforeunload = function() {
+      if (changes)
+      return Util.confirm();
+    }
+
+  },
+  loadText: function(url){
     if (Util.confirm()){
       var _this = this;
-      _this.retrieveAPIData(url, access_token).done(function(data){
+      _this.retrieveAPIData(url).done(function(data){
         var content = Util.parseXMLContent(data);
         _this.addXMLContent(content);
         _this.createPreviewContent(content);

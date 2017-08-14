@@ -10374,12 +10374,14 @@ var base64 = __webpack_require__(16);
 
 
 
-var access_token = window.location.hash.substring(7);
 var ace = __webpack_require__(17);
-
 var aceEditor;
+
 var Util = {
-  access_token: access_token,
+  access_token: "",
+  setAccessToken: function(access_token){
+    this.access_token = access_token;
+  },
   togglePreview: function(){
     if ($('#preview').is(':visible')){
       $("#editor").animate({"width": "100%"})
@@ -10445,7 +10447,7 @@ var Util = {
     $('.file-window').removeClass("visible")
     this.loadTemplateText();
   },
-  retrieveAPIData: function(url, access_token){
+  retrieveAPIData: function(url){
     // this should render obsolute the need for access token as a parameter.
     var access_token = this.access_token
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
@@ -10479,8 +10481,10 @@ var Util = {
     $('#message').val("");
 
     __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].set(data);
-    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified = !__WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified;
-    __WEBPACK_IMPORTED_MODULE_3__Repo_js__["a" /* default */].retrieveAndSetRepoState("https://api.github.com/repos/" + repo, Util.access_token)
+    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
+    __WEBPACK_IMPORTED_MODULE_3__Repo_js__["a" /* default */].retrieveAndSetRepoState("https://api.github.com/repos/" + repo)
   },
   clearSaveParameters: function(){
     $("#sha").val("");
@@ -10492,14 +10496,16 @@ var Util = {
     $('#message').val("");
 
     __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].set(null);
-    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified = false;
+    __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].setModified(false);
+    // Doc.modified = false;
+    // Util.browserNavCheck(false);
     __WEBPACK_IMPORTED_MODULE_3__Repo_js__["a" /* default */].set(null);
   },
   //this function checks if there have been any changes to the current file since the last save
-  // other functions should use to prompt user from navigating away from unsaved content.
+  //the Doc.setModified() function will call this evertime the modified state gets set.
   confirm: function(){
     var confirmed;
-    console.log("Doc.modiifed in confirm function", __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified);
+    console.log("Doc.modifed in confirm function", __WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified);
     if (__WEBPACK_IMPORTED_MODULE_1__Doc_js__["a" /* default */].modified){
       if (confirm("This current document as been modified since it last save. Do you want to proceed? Unsaved changes will be lost.")){
         confirmed = true;
@@ -10513,10 +10519,20 @@ var Util = {
     }
     return confirmed;
   },
-  loadText: function(url, access_token){
+  // this function sets browser behavior for when there are saved and unsaved changes
+  // it needs to be recalled whenever
+  browserNavCheck(changes){
+    console.log("test", changes);
+    window.onbeforeunload = function() {
+      if (changes)
+      return Util.confirm();
+    }
+
+  },
+  loadText: function(url){
     if (Util.confirm()){
       var _this = this;
-      _this.retrieveAPIData(url, access_token).done(function(data){
+      _this.retrieveAPIData(url).done(function(data){
         var content = Util.parseXMLContent(data);
         _this.addXMLContent(content);
         _this.createPreviewContent(content);
@@ -10714,23 +10730,28 @@ var Recent = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {global.jQuery = __webpack_require__(2);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Util_js__ = __webpack_require__(3);
+global.jQuery = __webpack_require__(2);
 var $ = global.jQuery;
+
+
 
 var Doc = {
   state: null,
   modified: true,
   set: function(data){
-    console.log(data);
     this.state = data;
     this.displayCurrentDoc(data);
+  },
+  setModified: function(value){
+    this.modified = value;
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].browserNavCheck(value);
   },
   displayCurrentDoc(data){
     $("#document-info").remove();
     if (data){
       var url = data.url
       var branch = url.split("?ref=")[1]
-      console.log(branch);
       var repo = url.split("https://api.github.com/repos/")[1].split("/contents/")[0];
       if (branch === "gh-pages"){
         $("#navbar-menu-list").append('<li id="document-info" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Current doc: ' + data.name + '<span class="caret"></span></a><ul id="document-info-list" class="dropdown-menu"></ul></li>');
@@ -10761,9 +10782,9 @@ var Repo = {
   set: function(data){
     this.state = data
   },
-  retrieveAndSetRepoState: function(url, access_token){
+  retrieveAndSetRepoState: function(url){
     var _this = this;
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
       _this.set(data);
     });
   }
@@ -31108,7 +31129,8 @@ var $ = global.jQuery;
 
 
 var SaveAs = {
-  saveFile: function(url, commitData, access_token){
+  saveFile: function(url, commitData){
+    var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token
     $.ajax({
       url: url_with_access, // your api url
@@ -31130,7 +31152,7 @@ var SaveAs = {
       }
     });
   },
-  displaySaveAsTree: function(url, branch, branchSha, access_token, repo, path){
+  displaySaveAsTree: function(url, branch, branchSha, repo, path){
     var tree_url = url;
     if ( url.includes("/git/trees/")){
       var tree_url = url;
@@ -31142,7 +31164,7 @@ var SaveAs = {
     $("#save-as-file-browser-list-wrapper > tbody").empty();
     $("#save-as-new-repo-or-directory").empty();
     $("#save-as-file-browser > p" ).remove();
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(tree_url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(tree_url).done(function(data){
       var tree = data.tree;
       var repoUrl = "https://api.github.com/repos/" + repo;
       $("#save-as-file-browser").prepend('<p><a href="#" class="display-saveAs-repo-list" title="Back to repo list">Repo</a>: ' + repo + ' | <a href="#" class="file-open-save-as-repo" data-url="' + repoUrl + '" title="Back to branch list">Branch</a>: ' + branch + ' | Path: ' + path + ' | <a href="#"><span class="glyphicon glyphicon-level-up"></span></a></p>');
@@ -31167,7 +31189,7 @@ var SaveAs = {
     var url = "https://api.github.com/user/repos";
     url = url + "?per_page=100";
     var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
       $("#repo-browser-branch").empty();
       $("#save-as-file-browser-list-wrapper > tbody").empty();
       $("#save-as-new-repo-or-directory").empty();
@@ -31178,26 +31200,27 @@ var SaveAs = {
       $("#save-as-new-repo-or-directory").append('<p>Create new repository</p><form id="create-new-repo"><input type="text" name="new-repo-name" id="new-repo-name" placeholder="new-repo-name"/><input type="submit"/></form>');
     });
   },
-  displaySaveAsRepoBranchList: function(repo_base, access_token){
+  displaySaveAsRepoBranchList: function(repo_base){
     var url = repo_base + "/branches";
     var repo = repo_base.split("https://api.github.com/repos/")[1];
     $("#repo-browser-branch").empty();
     $("#save-as-file-browser-list-wrapper > tbody").empty();
     $("#save-as-new-repo-or-directory").empty();
     $("#save-as-file-browser > p" ).remove();
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
       //$("#save-as-file-browser-list-wrapper").empty();
       for (var i = 0, len = data.length; i < len; i++) {
         $("#save-as-file-browser-list-wrapper > tbody").append('<tr><td><a href="#" class="file-open-save-as-branch" data-branch-sha="' + data[i].commit.sha + '" data-url="'+ repo_base + '" data-branch="' + data[i].name + '" data-repo="' + repo + '" data-path="">' + data[i].name +'</a></td><td><form id="create-new-save-as-branch" class="form-inline"><input id="branch" class="form-control" name="branch" placeholder="new-branch-name"></input><input type="hidden" id="repo" name="repo" value="' + repo + '"/><input type="hidden" id="branch-source-sha" name="branch-source-sha" value="' + data[i].commit.sha + '"/><button class="btn btn-default" type="submit">Create</button></form></form></li>');
       }
     });
   },
-  createNewSaveAsBranch: function(repo, branchName, branchSourceSha, access_token){
+  createNewSaveAsBranch: function(repo, branchName, branchSourceSha){
     var _this = this;
     new_branch_data = {
         "ref": "refs/heads/" + branchName,
         "sha": branchSourceSha
       }
+    var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
     var url = "https://api.github.com/repos/" + repo + "/" + "git/refs"
     var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
 
@@ -31213,7 +31236,7 @@ var SaveAs = {
         repo_base = "https://api.github.com/repos/" + repo;
         $("#branch").val(branchName);
         $("#sha").val(branchSourceSha);
-        _this.displaySaveAsTree(repo_base, branchName, branchSourceSha, access_token);
+        _this.displaySaveAsTree(repo_base, branchName, branchSourceSha);
       },
       error: function(res, status, error){
         console.log(res, status, error)
@@ -31241,7 +31264,7 @@ var SaveAs = {
         $("#repo").val(repo);
         var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
         $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
-        _this.displaySaveAsRepoBranchList(res.responseJSON.url, access_token)
+        _this.displaySaveAsRepoBranchList(res.responseJSON.url)
       },
       error: function(res, status, error){
         console.log(res, status, error)
@@ -31270,9 +31293,8 @@ var $ = global.jQuery;
 
 var Open = {
   recommendedRepos: {},
-  displayOpenTree: function(repo_base, access_token, branch, branchSha, path, repo){
-  //function displayTree(tree, path, branch, branchSha, repo, parent_tree_url){
-  //function retrieveRepoTree(repo_base, access_token, branch, branchSha){
+  displayOpenTree: function(repo_base, branch, branchSha, path, repo){
+
     $("#repo-browser-list > tbody").empty();
     $("#repo-browser-list > h3").remove();
     $("#repo-browser-list > thead").empty();
@@ -31290,7 +31312,7 @@ var Open = {
       var url = repo_base + "/git/trees/" + branch;
     }
 
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
 
       var tree = data.tree
 
@@ -31310,12 +31332,13 @@ var Open = {
       }
     });
   },
-  createNewOpenBranch: function(repo, branchName, branchSourceSha, access_token){
+  createNewOpenBranch: function(repo, branchName, branchSourceSha){
     var _this = this;
     var new_branch_data = {
         "ref": "refs/heads/" + branchName,
         "sha": branchSourceSha
       }
+      var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token;
       var url = "https://api.github.com/repos/" + repo + "/" + "git/refs"
       var url_with_access = url.includes("?") ? url + "&access_token=" + access_token : url + "?access_token=" + access_token;
       $.ajax({
@@ -31327,7 +31350,7 @@ var Open = {
 
         success: function(data, status, res) {
           var repo_base = "https://api.github.com/repos/" + repo;
-          _this.displayOpenTree(repo_base, access_token, branchName, branchSourceSha, "", repo)
+          _this.displayOpenTree(repo_base, branchName, branchSourceSha, "", repo)
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -31335,9 +31358,9 @@ var Open = {
       });
 
   },
-  displayOpenRepoBranchList: function(repo_base, access_token){
+  displayOpenRepoBranchList: function(repo_base){
     var url = repo_base + "/branches";
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
 
       var repo = repo_base.split("https://api.github.com/repos/")[1];
       //TODO Needs to refactor in to one "clear" function; this is repeated below in the display tree function
@@ -31363,10 +31386,9 @@ var Open = {
     $("#repositories > tbody").empty();
     $("#suggested-repositories > tbody").empty();
 
-    var access_token = __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token
     var url = "https://api.github.com/user/repos"
     url = url + "?per_page=100";
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url, access_token).done(function(data){
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].retrieveAPIData(url).done(function(data){
       if (__WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].files.length === 0) {
         $("#recentfiles").append('<tr><td>No recent files available</td></tr>');
       }
@@ -31401,9 +31423,7 @@ var Open = {
         success: function(data, status, res) {
 
           var forkedRepoBase = res.responseJSON.url;
-          Open.displayOpenRepoBranchList(forkedRepoBase, access_token);
-          //getRepoBranches(forkedRepoBase, access_token);
-
+          Open.displayOpenRepoBranchList(forkedRepoBase);
         },
         error: function(res, status, error){
           console.log(res, status, error)
@@ -31415,7 +31435,7 @@ var Open = {
     $('.file-window').removeClass("visible");
     __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].undarken();
     __WEBPACK_IMPORTED_MODULE_1__Recent_js__["a" /* default */].set(url);
-    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].loadText(url, __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].access_token)
+    __WEBPACK_IMPORTED_MODULE_0__Util_js__["a" /* default */].loadText(url)
   }
 }
 
@@ -31671,13 +31691,14 @@ __webpack_require__(19);
 
 
 
-var access_token = window.location.hash.substring(7);
+const access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 var aceEditor;
 
 
 var Main = {
   init: function(customSettings){
     console.log(access_token)
+    __WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].setAccessToken(access_token);
     aceEditor = ace.edit("editor");
     aceEditor.setTheme("ace/theme/kuroir");
     aceEditor.session.setMode("ace/mode/xml");
@@ -31752,7 +31773,7 @@ var Main = {
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = url.split("https://api.github.com/repos/")[1];
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, access_token, branch, branchSha, "", repo);
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, branch, branchSha, "", repo);
 
     });
 
@@ -31763,14 +31784,14 @@ var Main = {
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
       var repo = $(this).attr("data-repo");
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, access_token, branch, branchSha, path, repo);
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenTree(url, branch, branchSha, path, repo);
     });
 
     // select repo and list available branches
     $(document).on("click", ".display-open-repo-branch-list", function(){
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenRepoBranchList(url, access_token);
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].displayOpenRepoBranchList(url);
 
     });
 
@@ -31780,7 +31801,7 @@ var Main = {
       var branchName = $(e.target).find("#branch").val();
       var repo = $(e.target).find("#repo").val();
       var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].createNewOpenBranch(repo, branchName, branchSourceSha, access_token);
+      __WEBPACK_IMPORTED_MODULE_7__Open_js__["a" /* default */].createNewOpenBranch(repo, branchName, branchSourceSha);
     });
 
     //==BEGIN CREATE FORK EVENTS ====//
@@ -31831,8 +31852,7 @@ var Main = {
       var branchName = $(e.target).find("#branch").val();
       var repo = $(e.target).find("#repo").val();
       var branchSourceSha = $(e.target).find("#branch-source-sha").val();
-      //displaySaveAsTree(url, branch, branchSha, access_token);
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].createNewSaveAsBranch(repo, branchName, branchSourceSha, access_token);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].createNewSaveAsBranch(repo, branchName, branchSourceSha);
     });
     $(document).on("submit", "#create-new-repo", function(e){
       e.preventDefault();
@@ -31848,7 +31868,7 @@ var Main = {
       $("#repo").val(repo);
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsRepoBranchList(url, access_token);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsRepoBranchList(url);
     });
     //opens top level tree in saveAs window for a given repo branch
     $(document).on("click", ".file-open-save-as-branch", function(){
@@ -31862,9 +31882,7 @@ var Main = {
       //var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
       $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
-      //retrieveDirectoryCommits(url, access_token)
-      //retrieveRepoTree(url, access_token, branch, branchSha);
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, repo, path);
     });
     $(document).on("click", ".file-open-save-as-path", function(){
       var url = $(this).attr("data-url");
@@ -31875,9 +31893,7 @@ var Main = {
       var path_segment = path.length > 0 ? path + "/" : "";
       $("#path").val(path);
       $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
-      //retrieveDirectoryCommits(url, access_token)
-      //retrieveRepoTree(url, access_token, branch, branchSha);
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, access_token, repo, path);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].displaySaveAsTree(url, branch, branchSha, repo, path);
     });
 
     // BEGIN events keep saveAs form input values in sync with directory browsing
@@ -31916,7 +31932,7 @@ var Main = {
         "sha": sha,
         "branch": branch
       }
-      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].saveFile(url, commit_data, access_token);
+      __WEBPACK_IMPORTED_MODULE_6__SaveAs_js__["a" /* default */].saveFile(url, commit_data);
       });
 
   //======================================================== //
@@ -31943,7 +31959,9 @@ var Main = {
       var newText = __WEBPACK_IMPORTED_MODULE_1__Renderer_js__["a" /* default */].tei_conversion(aceEditor.getValue(), function(data){
       });
       //change Doc state to modified
-      __WEBPACK_IMPORTED_MODULE_2__Doc_js__["a" /* default */].modified = true;
+      __WEBPACK_IMPORTED_MODULE_2__Doc_js__["a" /* default */].setModified(true);
+      // Doc.modified = true;
+      // Util.browserNavCheck(true);
       $("#preview").html(newText);
     });
 
@@ -31959,6 +31977,7 @@ var Main = {
       var styleName = $(this).attr("data-style-name");
       __WEBPACK_IMPORTED_MODULE_10__Preview_js__["a" /* default */].selectPreviewStyle(styleName);
     });
+
   //======================================================== //
   // END MISCELLANEOUS EVENTS
   //end of event handling functions

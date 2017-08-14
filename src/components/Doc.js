@@ -1,20 +1,24 @@
 global.jQuery = require('jQuery');
 var $ = global.jQuery;
 
+import Util from "./Util.js";
+
 var Doc = {
   state: null,
   modified: true,
   set: function(data){
-    console.log(data);
     this.state = data;
     this.displayCurrentDoc(data);
+  },
+  setModified: function(value){
+    this.modified = value;
+    Util.browserNavCheck(value);
   },
   displayCurrentDoc(data){
     $("#document-info").remove();
     if (data){
       var url = data.url
       var branch = url.split("?ref=")[1]
-      console.log(branch);
       var repo = url.split("https://api.github.com/repos/")[1].split("/contents/")[0];
       if (branch === "gh-pages"){
         $("#navbar-menu-list").append('<li id="document-info" class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Current doc: ' + data.name + '<span class="caret"></span></a><ul id="document-info-list" class="dropdown-menu"></ul></li>');
