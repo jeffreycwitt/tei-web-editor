@@ -11,7 +11,7 @@ var User = {
   },
   retrieveAndSetUserState: function(){
     var _this = this;
-    var url = "https://api.github.com/user";
+    var url = Util.apiBaseUrl + "user";
     Util.retrieveAPIData(url).done(function(data){
       _this.set(data);
       _this.displayUserName(data);
