@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === 'production'){
     "redirect": "https://tei-web-editor.herokuapp.com",
   	"url": "https://tei-web-editor.herokuapp.com",
   	"scope": "repo",
+		"base": "https://github.com/",
   	"client": process.env.CLIENT_ID,
   	"secret": process.env.CLIENT_SECRET
   }
@@ -13,7 +14,6 @@ if (process.env.NODE_ENV === 'production'){
 else {
   var github = require('./github.json')
 }
-
 
 // Create our app
 //Oath pattern bascially follows https://github.com/keshavsaharia/github-oauth/blob/master/oauth.js
@@ -51,7 +51,7 @@ app.get('/login', function(req, res) {
 
 	// Redirect to GitHub
 	res.setHeader('location',
-		'https://github.com/login/oauth/authorize?state=' + state
+		github.base + 'login/oauth/authorize?state=' + state
 	  	+ '&client_id=' + github.client
 	  	+ '&scope=' + github.scope
 	  	+ '&redirect_uri=' + github.url + '/return'
@@ -70,7 +70,7 @@ app.get("/return", function(req, res, callback){
 	// Retrieve the access token for the user
 	else
 	    request.get({
-			url: 'https://github.com/login/oauth/access_token'
+			url: github.base + 'login/oauth/access_token'
 			  	 + '?client_id=' + github.client
 			  	 + '&client_secret=' + github.secret
 			  	 + '&code=' + req.query.code

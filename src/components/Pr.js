@@ -21,7 +21,7 @@ var Pr = {
     }
   },
   submitPullRequest: function(currentRepo, currentBranch, targetRepo, targetBranch){
-    var url = "https://api.github.com/repos/" + targetRepo + "/pulls"
+    var url = Util.apiBaseUrl + "repos/" + targetRepo + "/pulls"
     var currentUsername = currentRepo.split("/")[0];
     var pr = {
     "title": "Pull request sumbitted from TEI Web Editor",

@@ -32,6 +32,14 @@ var aceEditor;
 
 var Main = {
   init: function(customSettings){
+    if (customSettings.apiBaseUrl !== undefined){
+      Util.setBaseUrls(customSettings.apiBaseUrl, customSettings.baseUrl);
+    } else {
+      Util.setBaseUrls("https://api.github.com/", "https://github.com");
+    }
+    Util.setHelpUrls(customSettings.helpUrls);
+    Util.removeExtras(customSettings.hideSuggestedRepos, customSettings.hideForkAnotherRepo, customSettings.hidePR);
+
     console.log(access_token)
     Util.setAccessToken(access_token);
     aceEditor = ace.edit("editor");
@@ -50,7 +58,9 @@ var Main = {
       User.retrieveAndSetUserState()
     }
     Open.recommendedRepos = customSettings.recommendedRepos;
-    Preview.createPreviewStylesList(customSettings.previewStyles)
+    if(customSettings.previewStyles.length > 1 && customSettings.previewStyles !== undefined && (customSettings.hidePreviewStyles === false || customSettings.hidePreviewStyles === undefined)){
+      Preview.createPreviewStylesList(customSettings.previewStyles);
+    }
     Util.loadTemplateText(true);
   },
   bindEventHandlers: function(){
@@ -96,6 +106,11 @@ var Main = {
       Util.toggleEditor();
     });
 
+    // open Help Menu
+    $(document).on("click", "#help-menu", function(){
+      Util.toggleHelp();
+    })
+
   //======================================================== //
   // END MAIN NAV BAR EVENTS//
 
@@ -107,7 +122,7 @@ var Main = {
       var url = $(this).attr("data-url");
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch-sha");
-      var repo = url.split("https://api.github.com/repos/")[1];
+      var repo = url.split(Util.apiBaseUrl + "repos/")[1];
       Open.displayOpenTree(url, branch, branchSha, "", repo);
 
     });
@@ -170,7 +185,7 @@ var Main = {
       var branch = $(this).attr("data-branch");
       var branchSha = $(this).attr("data-branch");
       var repo = $(this).attr("data-repo");
-      var url = "https://api.github.com/repos/" + repo + "/contents" + path + "?ref=" + branch;
+      var url = Util.apiBaseUrl + "repos/" + repo + "/contents" + path + "?ref=" + branch;
       Open.openFile(url)
     });
     //=== END OPEN FILE EVENTS ===//
@@ -187,6 +202,7 @@ var Main = {
       var branchName = $(e.target).find("#branch").val();
       var repo = $(e.target).find("#repo").val();
       var branchSourceSha = $(e.target).find("#branch-source-sha").val();
+      console.log("#create-new-save-as-branch clicked: SourceSha: " + SourceSha);
       SaveAs.createNewSaveAsBranch(repo, branchName, branchSourceSha);
     });
     $(document).on("submit", "#create-new-repo", function(e){
@@ -198,11 +214,11 @@ var Main = {
     //opens list of branches in save as window
     $(document).on("click", ".file-open-save-as-repo", function(){
       var url = $(this).attr("data-url");
-      var repo = url.split("https://api.github.com/repos/")[1];
+      var repo = url.split(Util.apiBaseUrl + "repos/")[1];
       Util.clearSaveParameters();
       $("#repo").val(repo);
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
       SaveAs.displaySaveAsRepoBranchList(url);
     });
     //opens top level tree in saveAs window for a given repo branch
@@ -212,11 +228,15 @@ var Main = {
       var branchSha = $(this).attr("data-branch-sha");
       var repo = $(this).attr("data-repo");
       var path = $(this).attr("data-path");
+      // console.log(".file-open-save-as-branch clicked");
+      // console.log("branch " + branch + " path " + path + " repo " + repo + " url " + url + " branchSha " + branchSha);
+      // console.log("sha");
+      // console.log($("#sha").val());
       $("#branch").val(branch);
-      $("#sha").val(branchSha);
-      //var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
+      //$("#sha").val(branchSha);
+      console.log($("#sha").val());
       $("#path").val(path);
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
       SaveAs.displaySaveAsTree(url, branch, branchSha, repo, path);
     });
     $(document).on("click", ".file-open-save-as-path", function(){
@@ -226,27 +246,29 @@ var Main = {
       var path = $(this).attr("data-path");
       var repo = $(this).attr("data-repo");
       var path_segment = path.length > 0 ? path + "/" : "";
+      console.log(".file-open-save-as-path clicked");
+      console.log("branch " + branch + " path " + path + " repo " + repo + " url " + url + " branchSha " + branchSha);
       $("#path").val(path);
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path_segment + $("#file-name").val() + "?ref=" + $("#branch").val());
       SaveAs.displaySaveAsTree(url, branch, branchSha, repo, path);
     });
 
     // BEGIN events keep saveAs form input values in sync with directory browsing
     $(document).on("input", "#repo", function(e){
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
     });
     $(document).on("input", "#path", function(e){
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
     });
     $(document).on("input", "#file-name", function(e){
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
     });
     $(document).on("input", "#branch", function(e){
       var path = $("#path").val().length > 0 ? $("#path").val() + "/" : "";
-      $("#save-url").html("https://api.github.com/repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
+      $("#save-url").html(Util.apiBaseUrl + "repos/" + $("#repo").val() + "/contents/" + path + $("#file-name").val() + "?ref=" + $("#branch").val());
     });
     // END events keep saveAs form input values in sync with directory browsing
 
@@ -255,20 +277,35 @@ var Main = {
       var textContent = aceEditor.getValue();
       var content = base64.encode(textContent);
 
+      //get data for file name
       var url = $("#save-url").text();
+      var sha = "";
       var branch = $(this).find("#branch").val();
-      var sha = $(this).find("#sha").val();
       var message = $(this).find("#message").val();
-
-      var commit_data = {
-        "path": url,
-        "message": message,
-        "content": content,
-        "sha": sha,
-        "branch": branch
-      }
-      SaveAs.saveFile(url, commit_data);
+      var data = Util.retrieveAPIData(url).done(function (data, status, jqXHR) {
+        // console.log("Promise success callback.");
+        sha = data.sha;
+      }).fail(function (jqXHR,status,err) {
+        //console.log("Promise error callback.");
+        if(status === "error"){
+          if(jqXHR.status == 404){
+            //console.log("404 Not Found - new file. Parent will be existing file.");
+            sha = $(this).find("#sha").val();
+          }
+        }
+      }).always(function () {
+        //console.log("Promise completion callback.");
+        var commit_data = {
+          "path": url,
+          "message": message,
+          "content": content,
+          "sha": sha,
+          "branch": branch
+        }
+        //console.log(commit_data);
+        SaveAs.saveFile(url, commit_data);
       });
+    });
 
   //======================================================== //
   //END SAVE AS DIALOGUE BOX EVENTS //
@@ -307,7 +344,6 @@ var Main = {
     $("#editor-wrapper").on("click", function(){
       Util.hideFileWindow()
     });
-
     $(document).on("click", ".select-preview-style", function(){
       var styleName = $(this).attr("data-style-name");
       Preview.selectPreviewStyle(styleName);

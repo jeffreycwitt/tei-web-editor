@@ -6,13 +6,14 @@
 
     <link rel="stylesheet" type="text/css" href="xmlstyles/default.css" title="default" class="preview-style-link">
     <link rel="stylesheet" type="text/css" href="xmlstyles/lbp-1.0.0-critical.css" title="lbp-1.0.0-critical" class="preview-style-link">
-
   </head>
   <body>
     <script src="bundle.js"></script>
     <script src="mirador-2.4/mirador.js"></script>
     <script src="MiradorDisableZoom.js"></script>
     <script src="mirador-instance.js"></script>
+    <script src="resizing.js"></script>
+
     <!-- <script src="xmlstyles/lbp-1.0.0-critical.js" title="lbp-1.0.0-critical" class="preview-style-link"></script> -->
 
     <nav class="navbar navbar-default" style="margin-bottom: 0px;">
@@ -69,6 +70,7 @@
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
+            <li id="help-menu"><a href="#">Help</a></li>
             <li id="user-login-display"><a href="/login">Login</a></li>
 
         </ul>
@@ -81,7 +83,9 @@
   <div id="editor-wrapper">
     <div id="mirador-viewer"></div>
     <div id="xml-wrapper">
-      <div id="editor" class="window"></div>
+      <div id="resizable-editor" class="window">
+        <div id="editor"></div>
+      </div>
       <div id="preview" class="window"></div>
     </div>
   </div>
@@ -198,6 +202,13 @@
     <div id="current-repo">
     </div>
     <div id="target-repo">
+    </div>
+  </div>
+  <div id="help-viewer" class="file-window">
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div id="help-content">
     </div>
   </div>
   </body>

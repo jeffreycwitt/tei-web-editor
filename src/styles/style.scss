@@ -3,6 +3,7 @@
 @import 'components/fileWindow';
 @import 'components/miradorViewer';
 @import 'components/editorPreviewWindows';
+@import 'components/helpWindow';
 
 // Global Styles
 body {
@@ -10,4 +11,31 @@ body {
   height:100%;
   background-color: $default-background-color;
   color: $default-font-color;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#resizable-editor {
+  position:relative;
+}
+#editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.mirador-container .layout-slot{
+  height:100%;
+}
+
+
+#views-menu{
+  z-index:19000
+}
+
+//Hack to fix Mirado add button; may be fixed in PR https://github.com/ProjectMirador/mirador/pull/1466
+.mirador-container .slotIconContainer {
+  top:20%;
+  margin-top:-100px;
 }
