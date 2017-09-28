@@ -6,17 +6,10 @@ var mir = Mirador({
           'mainMenuSettings': {
             'show': false
           },
-          'openManifestsPage' : true,
+          'openManifestsPage' : false,
           "buildPath": "mirador-2.4/",
           "data" : [
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/B1"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/B2"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/D"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/G"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/K1"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/K2"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/N"},
-              {"manifestUri": "http://digital-editing.fas.harvard.edu/manifests/S"},
+            {"manifestUri": "https://scta.info/iiif/plaoulcommentary/sorb/manifest"}
           ],
           // "windowObjects":[{
           //   //loadedManifest: "http://scta.info/iiif/summahalensis/quaracchi1924/manifest",
