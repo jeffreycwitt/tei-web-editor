@@ -253,8 +253,9 @@ var Main = {
     $("#save-form").submit(function(e){
       e.preventDefault();
       var textContent = aceEditor.getValue();
-      var content = base64.encode(textContent);
 
+      var content = base64.encode(Util.encode_utf8(textContent));
+      
       var url = $("#save-url").text();
       var branch = $(this).find("#branch").val();
       var sha = $(this).find("#sha").val();

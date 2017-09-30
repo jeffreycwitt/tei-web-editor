@@ -208,6 +208,12 @@ var Util = {
         Util.clearSaveParameters();
 
     }
+  },
+  encode_utf8: function(s){
+    return unescape(encodeURIComponent(s));
+  },
+  decode_utf8: function(s) {
+    return decodeURIComponent(escape(s));
   }
 }
 
