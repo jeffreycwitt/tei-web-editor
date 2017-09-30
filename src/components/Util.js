@@ -88,6 +88,7 @@ var Util = {
   },
   parseXMLContent: function(data){
     var content = base64.decode(data.content);
+    content = this.decode_utf8(content);
     return content;
   },
   addXMLContent: function(content){

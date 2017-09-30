@@ -10455,6 +10455,7 @@ var Util = {
   },
   parseXMLContent: function(data){
     var content = base64.decode(data.content);
+    content = this.decode_utf8(content);
     return content;
   },
   addXMLContent: function(content){
@@ -31926,7 +31927,7 @@ var Main = {
       var textContent = aceEditor.getValue();
 
       var content = base64.encode(__WEBPACK_IMPORTED_MODULE_4__Util_js__["a" /* default */].encode_utf8(textContent));
-      
+
       var url = $("#save-url").text();
       var branch = $(this).find("#branch").val();
       var sha = $(this).find("#sha").val();
