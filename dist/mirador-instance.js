@@ -7,10 +7,15 @@ var mir = Mirador({
             'show': false
           },
           //'openManifestsPage' : false,
-          "buildPath": "mirador-2.4/",
+          "buildPath": "mirador/",
           "data" : [
               {"manifestUri": "https://scta.info/iiif/plaoulcommentary/sorb/manifest"}
           ],
+          "sidePanelOptions" : {
+           "tocTabAvailable": true,
+           "searchTabAvailable": true,
+           "annotations" : true
+         },
           // "windowObjects":[{
           //   //loadedManifest: "http://scta.info/iiif/summahalensis/quaracchi1924/manifest",
           //   //canvasID: "http://scta.info/iiif/quaracchi1924/canvas/40",
